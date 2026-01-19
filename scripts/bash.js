@@ -1,18 +1,22 @@
+// import {runGurgle} from "./gurgle";
+
 const MAX_LINES = 20;	//Does not include the input line.
 let log = [];
 let currentInput = "";
 let rowsFilled = 0;
-let cursorPos = 0;
+// let cursorPos = 0;
 let user= 'user@uncleankiwi.github.io';
 let path = '~'
+const directory = new Map([
+	["gurgle", someFunction],
+	["suso", someOtherFunc]]);
+//
 
-// drawLog();
-document.addEventListener('load', (e) => {
+document.addEventListener('load', () => {
 	drawLog();
 });
 document.addEventListener('keyup', (e) => {
 	onKeyUp(e);
-	document.getElementById('cmd').innerHTML = '<span style="color: #ffcccc">' + e.key + '</span>';
 	drawLog();
 });
 
@@ -25,7 +29,7 @@ function onKeyUp(e) {
 	}
 	else if (e.key === 'Enter') {
 		printLine(decorateInput());
-		eval(currentInput);
+		evaluate(currentInput);
 		currentInput = '';
 	}
 }
@@ -46,8 +50,23 @@ function printLine(str) {
 	}
 }
 
-function eval(command) {
-	printLine(currentInput + ': command not found');
+function someOtherFunc(str) {
+	printLine("some other func" + str);
+}
+
+function someFunction(str) {
+	printLine("somefunc~" + str);
+}
+
+// export const printer = (s) => {printLine(s)};
+
+function evaluate(command) {
+	if (directory.has(command)) {
+		directory.get(command)(currentInput);
+	}
+	else {
+		printLine(currentInput + ': command not found');
+	}
 }
 
 function decorateInput() {
