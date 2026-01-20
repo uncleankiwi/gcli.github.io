@@ -1,18 +1,24 @@
-import runGurgle from "./gurgle.js";
+
+// noinspection ES6UnusedImports
+
+import {ApplicationState} from "./helpers.js";
+import {cmd} from "./cmd.js";
+// noinspection ES6UnusedImports
+import {gurgle} from "./gurgle.js";
+import {mm} from "./mm.js";
+import {suso} from "./suso.js";
+
+/*
+Main script. Handles the log and displaying/highlighting of the log.
+Stores which 'application' is currently running, and fetches the input prefix from them.
+ */
 
 const MAX_LINES = 20;	//Does not include the input line.
 let log = [];
 let currentInput = "";
 let rowsFilled = 0;
 // let cursorPos = 0;
-let user= 'user@uncleankiwi.github.io';
-let path = '~'
-const directory = new Map([
-	["gurgle", runGurgle],
-	["suso", someOtherFunc]
-	,["test", someFunction]
-	]);
-//
+let app = new cmd();
 
 document.addEventListener('load', () => {
 	drawLog();
@@ -31,13 +37,35 @@ function onKeyUp(e) {
 	}
 	else if (e.key === 'Enter') {
 		printLine(decorateInput());
-		evaluate(currentInput);
+		app.evaluate(currentInput);
+		if (app.state === ApplicationState.CLOSE) {
+			if (app.constructor.name === 'cmd') {
+				clearLog();
+				printLine("Cmd restarted.");
+			}
+			app = new cmd();
+		}
+		else if (app.state === ApplicationState.OPEN_APPLICATION) {
+			//Only allow cmd to swap applications.
+			if (app.constructor.name === 'cmd') {
+				swapApplication(app.nextApplication);
+			}
+		}
 		currentInput = '';
 	}
 }
 
+function decorateInput() {
+	return app.prompt() + currentInput;
+}
+
+
+export function clearLog() {
+	rowsFilled = 0;
+}
+
 //Decorates the input line plus prefix (username and all), then appends log with it.
-function printLine(str) {
+export function printLine(str) {
 	if (rowsFilled >= MAX_LINES) {
 		for (let i = 1; i < MAX_LINES; i++) {
 			log[i - 1] = log[i];
@@ -51,34 +79,11 @@ function printLine(str) {
 	}
 }
 
-function someOtherFunc(str) {
-	printLine("some other func " + str + " " + gurgle.runGurgle());
-}
-
-function someFunction(str) {
-	printLine("somefunc~" + str);
-}
-
 // export const printer = (s) => {printLine(s)};
 
-//Run the function stored in the map if the key matches.
-function evaluate(command) {
-	if (directory.has(command)) {
-		directory.get(command)(currentInput);
-	}
-	else {
-		printLine(currentInput + ': command not found');
-		// printer("hi");
-	}
-}
-
-function decorateInput() {
-	return wrapColour(user, '#55cc33') + ':' + wrapColour(path, '#5566ee') + '$ '
-		+ currentInput;
-}
-
-function wrapColour(str, colour) {
-	return '<span style="color: ' + colour + '">' + str + '</span>';
+function swapApplication(startedApp) {
+	// app = new gurgle();
+	app = eval("new " + startedApp + "()");
 }
 
 //Prints out every line of log.

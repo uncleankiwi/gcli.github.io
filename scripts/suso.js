@@ -1,13 +1,13 @@
 import {Application} from "./helpers.js";
 import {printLine} from "./bash.js";
 
-export class gurgle extends Application {
+export class suso extends Application {
 	evaluate(command) {
 		super.evaluate(command);
-		printLine("gurg evaluated.");
+		printLine("suso...")
 	}
 
 	prompt() {
-		return "guuurg: ";
+		return "suso prefix: ";
 	}
 }
