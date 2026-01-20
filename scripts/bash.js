@@ -1,4 +1,4 @@
-// import {runGurgle} from "./gurgle";
+import runGurgle from "./gurgle.js";
 
 const MAX_LINES = 20;	//Does not include the input line.
 let log = [];
@@ -8,9 +8,9 @@ let rowsFilled = 0;
 let user= 'user@uncleankiwi.github.io';
 let path = '~'
 const directory = new Map([
-	["gurgle", someFunction],
+	["gurgle", runGurgle],
 	["suso", someOtherFunc]
-	// ,["test", runGurgle]
+	,["test", someFunction]
 	]);
 //
 
@@ -52,7 +52,7 @@ function printLine(str) {
 }
 
 function someOtherFunc(str) {
-	printLine("some other func" + str);
+	printLine("some other func " + str + " " + gurgle.runGurgle());
 }
 
 function someFunction(str) {

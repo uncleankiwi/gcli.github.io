@@ -1,6 +1,5 @@
-// import {printer} from "./bash";
-//
-// export function runGurgle() {
-// 	// printer("hi from gurgle");
-// 	return "hi"
-// }
+export default function runGurgle() {
+	// printer("hi from gurgle");
+	alert('gurhfggu');
+	console.log('gurgle!');
+}
