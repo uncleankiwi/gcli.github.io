@@ -1,5 +1,5 @@
 import {Application, ApplicationState} from "./helpers.js";
-import {clearLog, printLine} from "./bash.js";
+import {clearLog, drawLog, printLine} from "./bash.js";
 
 const MMState = Object.freeze({
 	TITLE: 0,
@@ -26,6 +26,10 @@ class GameData {
 	attemptCount = 0;
 	attempts = [];	//Holds the attempts; each attempt is also a [];
 	grades = [];	//Holds the grades for each attempt; each grade is also a [];
+	toClearLog = true;	//Should the log be cleared before asking the user for their first guess?
+
+	constructor() {
+	}
 
 	chancesLeft() {
 		return this.chances - this.attemptCount;
@@ -33,13 +37,12 @@ class GameData {
 
 	pickNumbers() {
 		for (let i = 0; i < this.places; i++) {
-			this.answer[i] = 1 + Math.floor(Math.random() * (this.colours - 1));
+			this.answer[i] = 1 + Math.floor(Math.random() * (this.colours));
 		}
 	}
 
 	//Parse the first 'places' non-space characters and puts them in an array.
 	parseDigits(inputString) {
-		let s = "test";
 		let output = [];
 		let stringIndex = 0;
 		for (let arrIndex = 0; arrIndex < this.places; arrIndex++) {
@@ -50,12 +53,12 @@ class GameData {
 			else {
 				//Put the character in and skip any spaces.
 				if (inputString.charAt(stringIndex) !== ' ') {
-					output[arrIndex] = inputString.charAt(stringIndex);
+					output[arrIndex] = parseInt(inputString.charAt(stringIndex));	//todo ?
 				}
 				stringIndex++;
 			}
 		}
-		this.attempts[this.attemptCount] = output;
+		this.attempts[this.attemptCount - 1] = output;
 	}
 
 	//If any character is not a digit within maxColours and minColours, return null.
@@ -64,14 +67,14 @@ class GameData {
 	grade() {
 		//Checking if every input is valid
 		let previousGrade = [];
-		let previousAttempt = this.attempts[this.attemptCount];
+		let previousAttempt = this.attempts[this.attemptCount - 1];
 		let attemptMap = new Map();
 		let answerMap = new Map();
 		let correctColourAndPos = 0;
 		let correctColour = 0;
 		for (let i = 0; i < this.places; i++) {
-			if (previousAttempt[i] >= this.minColours && previousAttempt[i] <= this.maxColours) {
-				let attemptToken = previousAttempt[i];
+			let attemptToken = previousAttempt[i];
+			if (attemptToken >= this.minColours && attemptToken <= this.maxColours) {
 				let answerToken = this.answer[i];
 				if (attemptToken === answerToken) {
 					//Go through each position, and if it's correct, increment correctColourAndPos.
@@ -90,8 +93,27 @@ class GameData {
 			}
 		}
 		//Increment correctColour based on the two maps.
-		attemptMap.forEach(x, y => {})	//todo
-		this.grades[this.attemptCount] = previousGrade;
+		if (previousGrade != null) {
+			attemptMap.forEach(function(value, key) {
+				if (answerMap.has(key)) {
+					correctColour += Math.min(value, answerMap.get(key));
+				}
+			})
+			previousGrade = [correctColourAndPos, correctColour];
+		}
+		this.grades[this.attemptCount - 1] = previousGrade;
+
+		printLine("attempt map" + this.mapToString(attemptMap));
+		printLine("answer map" + this.mapToString(answerMap));
+
+		//Check if round is won.
+		if (correctColourAndPos >= this.places) {
+			this.won = true;
+		}
+		//Check if user is out of turns and did not win i.e. round is lost.
+		else if (this.attemptCount >= this.chances) {
+			this.lost = true;
+		}
 	}
 
 	incrementMap(map, k) {
@@ -102,10 +124,22 @@ class GameData {
 			map.set(k, 1);
 		}
 	}
+
+	mapToString(map) {
+		let output = "";
+		map.forEach(function(value, key) {
+			output += "(" + key + "," + value + ")";
+
+		});
+		return output;
+	}
 }
 
 
 export class mm extends Application {
+	gameState = MMState.TITLE;
+	gameData = new GameData();
+
 	titleString = "Press Enter to begin, or 'q' to quit."
 	setupStringPossibleColours = "Enter 'd' to start with default settings, " +
 		"or enter a number from 1-9 for the number of possible different tokens at each location. " +
@@ -114,13 +148,12 @@ export class mm extends Application {
 		"(Default: 6)";
 	setupStringPlaces = "Enter a number from 1-9 for the number of tokens you have to guess. " +
 		"(Default: 4)";
-	inProgressString = "Enter " + this.gameData.places + " numbers as your next guess: ";
+	inProgressString1 = "Enter ";	//+ this.gameData.places
+	inProgressString2 = " numbers from 1 to " // + this.gameData.colours
+	inProgressString3 = " as your next guess: ";
 	winString = "You win!";
 	loseString = "You lose...";
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
-
-	gameState = MMState.TITLE;
-	gameData = new GameData();
 
 	constructor() {
 		super();
@@ -135,6 +168,7 @@ export class mm extends Application {
 		}
 		switch (this.gameState) {
 			case MMState.TITLE:
+				clearLog();
 				if (command === 'q') {
 					this.state = ApplicationState.CLOSE;
 					return;
@@ -156,7 +190,7 @@ export class mm extends Application {
 				if (y >= this.gameData.minChances && y <= this.gameData.maxChances) {
 					this.gameData.chances = y;
 				}
-				this.gameData.chancesLeft = this.gameData.chances;
+				this.gameData.attemptCount = 0;
 				this.gameState = MMState.CHOOSE_PLACES;
 				break;
 			case MMState.CHOOSE_PLACES:
@@ -166,10 +200,34 @@ export class mm extends Application {
 				}
 				this.gameData.pickNumbers();
 				this.gameState = MMState.IN_PROGRESS;
+				clearLog();
 				break;
 			case MMState.IN_PROGRESS:
+				// if (this.gameData.toClearLog) {
+				//
+				// 	this.gameData.toClearLog = false;
+				// }
+				this.gameData.attemptCount++;
+				this.gameData.parseDigits(command);
+				this.gameData.grade();
+				if (this.gameData.won || this.gameData.lost) {
+					this.gameState = MMState.DONE;
+				}
+				printLine(this.gameData.attempts[this.gameData.attemptCount - 1] +
+					" Grade: " + this.gameData.grades[this.gameData.attemptCount - 1] +
+					" Chances left: " + this.gameData.chancesLeft());
+				printLine(this.gameData.answer + " <- answer");
 				break;
 			case MMState.DONE:
+				clearLog();
+				if (command === 'q') {
+					this.state = ApplicationState.CLOSE;
+					return;
+				}
+				else {
+					this.gameData = new GameData();
+					this.gameState = MMState.CHOOSE_COLOURS;
+				}
 				break;
 			default:
 				throw "Unknown game state at prompt(): " + this.gameState;
@@ -187,18 +245,27 @@ export class mm extends Application {
 			case MMState.CHOOSE_PLACES:
 				return this.setupStringPlaces;
 			case MMState.IN_PROGRESS:
-				return this.inProgressString;
+				return this.inProgressString1 + this.gameData.places + this.inProgressString2
+					+ this.gameData.colours + this.inProgressString3;
 			case MMState.DONE:
 				let output = "";
 				if (this.gameData.won) {
 					output += this.winString;
 				}
 				else if (this.gameData.lost) {
+					printLine("Answer: " + this.gameData.answer);
 					output += this.loseString;
 				}
 				return output + " " + this.nextGameString;
 			default:
 				throw "Unknown game state at prompt(): " + this.gameState;
+		}
+	}
+
+	//Print out all attempts so far and their grade, plus the attemptsCount at the bottom.
+	printState() {
+		for (let i = 0; i < this.gameData.attemptCount; i++) {
+
 		}
 	}
 }

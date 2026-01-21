@@ -20,7 +20,7 @@ let rowsFilled = 0;
 // let cursorPos = 0;
 let app = new cmd();
 
-document.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
 	drawLog();
 });
 document.addEventListener('keyup', (e) => {
@@ -87,7 +87,7 @@ function swapApplication(startedApp) {
 }
 
 //Prints out every line of log.
-function drawLog() {
+export function drawLog() {
 	let output = "";
 	for (let i = 0; i < rowsFilled; i++) {
 		output += log[i] + '<br />';
