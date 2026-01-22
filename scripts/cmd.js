@@ -2,7 +2,7 @@
 Default application loaded by bash.
 Contains a directory of applications that can be loaded.
  */
-import {Application, ApplicationState, wrapColour} from "./helpers.js";
+import {Application, ApplicationState, makeRainbow, wrapColour} from "./helpers.js";
 import {printLine} from "./bash.js";
 import {gurgle} from "./gurgle.js";
 
@@ -35,11 +35,11 @@ export class cmd extends Application {
 		}
 		else {
 			printLine(command + ': command not found');
-			// printer("hi");
 		}
 	}
 
 	prompt() {
-		return wrapColour(this.user, '#55cc33') + ':' + wrapColour(this.path, '#5566ee') + '$ ';
+		//wrapColour(this.user, '#55cc33')
+		return makeRainbow(this.user) + ':' + wrapColour(this.path, '#5566ee') + '$ ';
 	}
 }

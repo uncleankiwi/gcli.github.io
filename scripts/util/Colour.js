@@ -25,7 +25,9 @@ export class Colour {
 
 	//Write the RGB values given the hex colour string.
 	stringToRGB() {
-		let decimal = parseInt(this.hex, 16);
+		let decimal = parseInt(this.hex.substring(1), 16);
+		
+		console.log("hi " + this.hex.substring(1) + " hi")
 		this.r = Math.floor(decimal / (255 * 255)) / 255;
 		this.g = Math.floor((decimal % 255) / 255) / 255;
 		this.b = (decimal % 255) / 255;
@@ -71,27 +73,27 @@ export class Colour {
 		let min = max * (1 - this.s);
 		let diff = (max - min) * (1 - Math.abs((this.h * 6) % 2 - 1));
 		let otherColour = min + diff;
-		if (h < 60/360) {
+		if (this.h < 60/360) {
 			this.r = max;
 			this.g = otherColour;
 			this.b = min;
 		}
-		else if (h < 120/360) {
+		else if (this.h < 120/360) {
 			this.r = otherColour;
 			this.g = max;
 			this.b = min;
 		}
-		else if (h < 180/360) {
+		else if (this.h < 180/360) {
 			this.r = min;
 			this.g = max;
 			this.b = otherColour;
 		}
-		else if (h < 240/360) {
+		else if (this.h < 240/360) {
 			this.r = min;
 			this.g = otherColour;
 			this.b = max;
 		}
-		else if (h < 300/360) {
+		else if (this.h < 300/360) {
 			this.r = otherColour;
 			this.g = min;
 			this.b = max;

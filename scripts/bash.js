@@ -1,12 +1,12 @@
-
 // noinspection ES6UnusedImports
 
-import {ApplicationState} from "./helpers.js";
+import {animColour, ApplicationState} from "./helpers.js";
 import {cmd} from "./cmd.js";
 // noinspection ES6UnusedImports
 import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";
 import {suso} from "./suso.js";
+import {Colour} from "./util/Colour.js";
 
 /*
 Main script. Handles the log and displaying/highlighting of the log.
@@ -20,6 +20,8 @@ let rowsFilled = 0;
 // let cursorPos = 0;
 let app = new cmd();
 
+setInterval(animColour, 1000);
+// let colour = new Colour(document.getElementById("rainbow").color);
 document.addEventListener('DOMContentLoaded', () => {
 	drawLog();
 });
