@@ -19,7 +19,8 @@ export class cmd extends Application {
 	directory = new Map([
 		["gurgle", ''],
 		["mm", ''],
-		["suso", '']
+		["suso", ''],
+		["clock", '']
 	]);
 	user= 'user@uncleankiwi.github.io';
 	path = '~';
