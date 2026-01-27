@@ -117,4 +117,9 @@ export class Application {
 	prompt() {
 
 	}
+
+	//Used for detecting key combinations like ctrl+C.
+	onKeyDown(keyState, e) {
+
+	}
 }

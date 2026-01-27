@@ -21,6 +21,7 @@ let currentInput = "";
 let rowsFilled = 0;
 // let cursorPos = 0;
 let app = new cmd();
+let keyState = {"Control":false, "Shift":false, "Alt":false};
 
 setInterval(refreshScreen, 100);
 // setInterval(animColour, 500);
@@ -32,18 +33,33 @@ document.addEventListener('keyup', (e) => {
 	onKeyUp(e);
 	drawLog();
 });
+document.addEventListener('keydown', (e) => {
+	onKeyDown(e);
+});
 
 function refreshScreen() {
 	drawLog();
 	app.redraw();	//Refreshes the log and also does colour animation.
 }
 
+function onKeyDown(e) {
+	if (e.key === "Shift" || e.key === "Control" || e.key === "Alt") {
+		updateKeyState(e.key, true);
+	}
+	app.onKeyDown(keyState, e);
+}
+
 function onKeyUp(e) {
+	if (e.key === "Shift" || e.key === "Control" || e.key === "Alt") {
+		updateKeyState(e.key, false);
+	}
+
 	if (e.key.length === 1) {
 		currentInput += e.key;
 	}
 	else if (e.key === 'Backspace') {
 		currentInput = currentInput.substring(0, currentInput.length - 1);
+		e.preventDefault();	//prevent browser back from happening
 	}
 	else if (e.key === 'Enter') {
 		printLine(decorateInput());
@@ -104,4 +120,9 @@ export function drawLog() {
 	}
 	output += decorateInput();
 	document.getElementById('cmd').innerHTML = output;
+}
+
+//For updating shift/control/alt status in keyState variable.
+function updateKeyState(keyString, isDown) {
+	keyState[keyString] = isDown;
 }
