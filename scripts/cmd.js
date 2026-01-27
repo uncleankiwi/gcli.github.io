@@ -35,15 +35,28 @@ export class cmd extends Application {
 	//Run the function stored in the map if the key matches.
 	evaluate(command) {
 		super.evaluate(command);
-		if (this.state === ApplicationState.CLOSE) {
+			if (this.state === ApplicationState.CLOSE) {
 			return;
 		}
 		if (this.directory.has(command)) {
 			this.nextApplication = command;
 			this.state = ApplicationState.OPEN_APPLICATION;
 		}
+		else if (command === "help") {
+			printLine("Fake JS bash");
+			printLine("Type `help` to see this list.");
+			printLine("The following are some scripts that can be run");
+			printLine("(may not be implemented though).")
+			printLine("`rainbow`, `exit`, and `quit` are some additional commands.");
+			printLine("");
+			let keys = this.directory.keys();
+			keys.forEach(key => printLine(key));
+		}
 		else if (command === "rainbow") {
 			printLine(makeRainbow(wrapIndividualCharsWithRandomPastelColours("Rainbow text rainbow text rainbow text.")));
+		}
+		else if (command === "ls" || command === "cd" || command === "cd ..") {
+			printLine("No filesystem analogue yet.")
 		}
 		else {
 			printLine(command + ': command not found');
