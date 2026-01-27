@@ -22,7 +22,7 @@ let rowsFilled = 0;
 // let cursorPos = 0;
 let app = new cmd();
 
-setInterval(refreshScreen, 1000);
+setInterval(refreshScreen, 100);
 // setInterval(animColour, 500);
 // let colour = new Colour(document.getElementById("rainbow").color);
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,9 +34,8 @@ document.addEventListener('keyup', (e) => {
 });
 
 function refreshScreen() {
-	animColour(app);
-	app.redraw();
 	drawLog();
+	app.redraw();	//Refreshes the log and also does colour animation.
 }
 
 function onKeyUp(e) {

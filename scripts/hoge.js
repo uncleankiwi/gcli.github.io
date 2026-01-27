@@ -4,10 +4,10 @@ import {printLine} from "./bash.js";
 export class hoge extends Application {
     evaluate(command) {
         super.evaluate(command);
-        printLine("hoge...")
+        printLine("hoge eval")
     }
 
     prompt() {
-        return "hoge prefix: ";
+        return "hoge prompt: ";
     }
 }

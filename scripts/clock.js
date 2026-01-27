@@ -1,4 +1,10 @@
-import {Application, ApplicationState} from "./helpers.js";
+import {
+	animColour,
+	Application,
+	ApplicationState,
+	makeRainbow,
+	wrapIndividualCharsWithRandomPastelColours
+} from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -108,6 +114,7 @@ export class clock extends Application {
 
 	redraw() {
 		super.redraw();
+		animColour(this, new Date());
 		let dateObj = new Date();
 		let second = dateObj.getSeconds();
 
@@ -146,6 +153,15 @@ export class clock extends Application {
 			this.appendToArray(arr,"p");
 		}
 		this.appendToArray(arr,"m");
+
+		//Do some colours when seconds is 0<= and >=3
+		// if (second >= 0 && second <= 3) {
+		// 	for (let i = 0; i < arr.length; i++) {
+		// 		arr[i] = makeRainbow(wrapIndividualCharsWithRandomPastelColours(arr[i]));
+		// 		console.log(arr[i]);
+		// 	}
+		// }
+
 		for (let i = 0; i < arr.length; i++) {
 			printLine(arr[i]);
 		}

@@ -1,4 +1,5 @@
 import {
+	animColour,
 	Application,
 	ApplicationState,
 	makeRainbow,
@@ -269,6 +270,11 @@ export class mm extends Application {
 			default:
 				throw "Unknown game state at prompt(): " + this.gameState;
 		}
+	}
+
+	redraw() {
+		super.redraw();
+		animColour(this, new Date());
 	}
 
 	//Print out all attempts so far and their grade, plus the attemptsCount at the bottom.
