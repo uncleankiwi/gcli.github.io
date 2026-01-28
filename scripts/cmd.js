@@ -58,6 +58,9 @@ export class cmd extends Application {
 		else if (command === "ls" || command === "cd" || command === "cd ..") {
 			printLine("No filesystem analogue yet.")
 		}
+		else if (command.trim() === "") {
+			//do nothing.
+		}
 		else {
 			printLine(command + ': command not found');
 		}

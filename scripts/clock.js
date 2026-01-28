@@ -107,8 +107,6 @@ export class clock extends Application {
 		super();
 		this.replaceCharsAndGetColourCopy(BIG_NUM, BIG_NUM_COLOUR);
 		this.replaceCharsAndGetColourCopy(BIG_CHAR, BIG_CHAR_COLOUR);
-
-		console.log(BIG_NUM_COLOUR);
 	}
 	evaluate(command) {
 		clearLog();

@@ -51,7 +51,6 @@ function animateNode(element, application, lastUpdated) {
 		if (value.time !== lastUpdated) {
 			value.colour.increment(10);
 			value.time = lastUpdated;
-			// console.log(value.colour.raw);
 		}
 		element.style.color = value.colour.raw;
 	}
