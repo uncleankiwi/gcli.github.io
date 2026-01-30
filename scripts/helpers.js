@@ -78,14 +78,18 @@ export class Application {
 
 	}
 
+	step(lastUpdated) {
+		this.stepColour(lastUpdated)
+	}
+
 	//Animate the "rainbow" span itself, and also any of its children. Grandchildren and onwards aren't animated.
-	animColour(lastUpdated) {
+	updateColour(lastUpdated) {
 		let elements = document.getElementsByClassName("rainbow");
 		for (let i = 0; i < elements.length; i++) {
-			this.animateNode(elements[i], lastUpdated);
+			this.updateNodeColour(elements[i], lastUpdated);
 			let children = elements[i].children;
 			for (let j = 0; j < children.length; j++) {
-				this.animateNode(children[j], lastUpdated);
+				this.updateNodeColour(children[j], lastUpdated);
 			}
 		}
 	}
@@ -97,8 +101,8 @@ export class Application {
 	//they should all have the same animation, i.e. the colour should not increment separately for each of them.
 	//If colour is not in map, put it in.
 	//If colour is in map and time is current, set colour to the map's value.
-	//Else, increment colour, then set colour to the map's value.
-	animateNode(element, lastUpdated) {
+	//Colour incrementation has been moved to stepColour() so colour can be refreshed whenever keyUp happens.
+	updateNodeColour(element, lastUpdated) {
 		let cssColour = element.style.color;
 		if (cssColour === "") {
 			cssColour = window.getComputedStyle(element).getPropertyValue("color");
@@ -107,7 +111,6 @@ export class Application {
 		if (this.colourMap.has(cssColour)) {
 			let value = this.colourMap.get(cssColour);
 			if (value.time !== lastUpdated) {
-				value.colour.increment(10);
 				value.time = lastUpdated;
 			}
 			element.style.color = value.colour.raw;
@@ -115,10 +118,14 @@ export class Application {
 		else {
 			this.colourMap.set(cssColour, {time: lastUpdated, colour: new Colour(cssColour)});
 		}
-
 	}
 
-	stepColour() {
-
+	//Increment colour map and possibly other stuff.
+	stepColour(lastUpdated) {
+		this.colourMap.values().forEach(x => {
+			if (x.time !== lastUpdated) {
+				x.colour.increment(10);
+			}
+		});
 	}
 }

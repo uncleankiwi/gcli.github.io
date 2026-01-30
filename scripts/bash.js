@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keyup', (e) => {
 	onKeyUp(e);
 	drawLog();
+	app.redraw();
 });
 document.addEventListener('keydown', (e) => {
 	onKeyDown(e);
@@ -37,7 +38,8 @@ document.addEventListener('keydown', (e) => {
 
 function refreshScreen() {
 	drawLog();
-	app.redraw();	//Refreshes the log and also does colour animation.
+	app.step(new Date());	//Does colour animations
+	app.redraw();	//Refreshes the log
 }
 
 function onKeyDown(e) {

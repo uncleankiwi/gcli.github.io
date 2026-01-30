@@ -67,7 +67,7 @@ export class cmd extends Application {
 
 	redraw() {
 		super.redraw();
-		this.animColour(new Date());
+		this.updateColour(new Date());
 	}
 
 	prompt() {

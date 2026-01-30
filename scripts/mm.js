@@ -273,7 +273,7 @@ export class mm extends Application {
 
 	redraw() {
 		super.redraw();
-		this.animColour(new Date());
+		this.updateColour(new Date());
 	}
 
 	//Print out all attempts so far and their grade, plus the attemptsCount at the bottom.

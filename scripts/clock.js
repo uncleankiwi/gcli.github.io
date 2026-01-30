@@ -118,7 +118,7 @@ export class clock extends Application {
 
 	redraw() {
 		super.redraw();
-		this.animColour(new Date());
+		this.updateColour(new Date());
 		let dateObj = new Date();
 		let second = dateObj.getSeconds();
 
