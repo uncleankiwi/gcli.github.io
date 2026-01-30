@@ -73,7 +73,7 @@ function onKeyUp(e) {
 		}
 		else if (app.state === ApplicationState.OPEN_APPLICATION) {
 			//Only allow cmd to swap applications.
-			if (app.constructor.a === 'cmd') {
+			if (app.constructor.name === 'cmd') {
 				swapApplication(app.nextApplication);
 			}
 		}
