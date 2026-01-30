@@ -100,14 +100,18 @@ let BIG_NUM_COLOUR = [];
 let BIG_CHAR_COLOUR = [];
 
 let previousSecond;
+let initialized = false;
 
 export class clock extends Application {
-
 	constructor() {
 		super();
-		this.replaceCharsAndGetColourCopy(BIG_NUM, BIG_NUM_COLOUR);
-		this.replaceCharsAndGetColourCopy(BIG_CHAR, BIG_CHAR_COLOUR);
+		if (!initialized) {
+			initialized = true;
+			this.replaceCharsAndGetColourCopy(BIG_NUM, BIG_NUM_COLOUR);
+			this.replaceCharsAndGetColourCopy(BIG_CHAR, BIG_CHAR_COLOUR);
+		}
 	}
+
 	evaluate(command) {
 		clearLog();
 		this.state = ApplicationState.CLOSE;
