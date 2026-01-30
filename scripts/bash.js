@@ -2,7 +2,6 @@
 
 import {animColour, ApplicationState} from "./helpers.js";
 import {cmd} from "./cmd.js";
-// noinspection ES6UnusedImports
 import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";
 import {suso} from "./suso.js";
@@ -24,8 +23,7 @@ let app = new cmd();
 let keyState = {"Control":false, "Shift":false, "Alt":false};
 
 setInterval(refreshScreen, 100);
-// setInterval(animColour, 500);
-// let colour = new Colour(document.getElementById("rainbow").color);
+
 document.addEventListener('DOMContentLoaded', () => {
 	drawLog();
 });
@@ -84,7 +82,6 @@ function onKeyUp(e) {
 function decorateInput() {
 	return app.prompt() + currentInput;
 }
-
 
 export function clearLog() {
 	rowsFilled = 0;
