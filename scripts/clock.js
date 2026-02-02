@@ -138,8 +138,8 @@ export class clock extends Application {
 		let year = dateObj.getFullYear();
 		clearLog();
 		let arr = ["","","","",""];
-		let isAM = hour < 13;
-		if (!isAM) {
+		let isAM = hour < 12;
+		if (hour >= 13) {
 			hour -= 12;
 		}
 

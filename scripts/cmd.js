@@ -38,8 +38,8 @@ export class cmd extends Application {
 	//Run the function stored in the map if the key matches.
 	evaluate(command) {
 		super.evaluate(command);
-			if (this.state === ApplicationState.CLOSE) {
-			return;
+		if (this.state === ApplicationState.CLOSE) {
+		return;
 		}
 		if (this.directory.has(command)) {
 			this.nextApplication = command;
