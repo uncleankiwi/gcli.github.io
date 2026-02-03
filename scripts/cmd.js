@@ -27,7 +27,7 @@ export class cmd extends Application {
 		["clock", ''],
 		["hoge", '']
 	]);
-	user= 'user@uncleankiwi.github.io';
+	user= 'user@uncleankiwi.github.io▉&nbsp;';
 	path = '~';
 	nextApplication = '';
 

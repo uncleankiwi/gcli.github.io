@@ -17,6 +17,7 @@ body, html {
 	height: 400px;
 	margin: auto;
 	position: relative;
+	text-wrap: wrap;
 }
 
 .rainbow {
