@@ -1,3 +1,7 @@
+:root {
+	--font-family: 'Liberation Mono', monospace;
+}
+
 body, html {
 	background-color: #222226;
 	height: 100%;
@@ -8,7 +12,7 @@ body, html {
 
 #cmd {
 	padding: 5px;
-	font-family: 'Liberation Mono', 'Courier New', monospace;
+	font-family: var(--font-family), monospace;
 	background-color: #222226;
 	border: 1px solid #aabbcc;
 	color: #eeeecc;
