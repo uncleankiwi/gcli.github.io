@@ -22,7 +22,7 @@ let rowsFilled = 0;
 let app = new cmd();
 let keyState = {"Control":false, "Shift":false, "Alt":false};
 
-setInterval(refreshScreen, 5000);
+setInterval(refreshScreen, 100);
 
 document.addEventListener('DOMContentLoaded', () => {
 	drawLog();
