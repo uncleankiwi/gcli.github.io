@@ -15,7 +15,6 @@ export class Dictionary {
 	static wordGroups;
 
 	static init() {
-		console.log("Dictionary init");	//todo rm
 		if (Dictionary.initialized) {
 			return;
 		}
@@ -73,15 +72,16 @@ export class Dictionary {
 		let arrCumulative = [];
 		let cumulative = 0;
 		for (let i = c1; i <= c2; i++) {
-			for (let j = 0; j < Dictionary.wordGroups[i].size; j++) {
+			for (let j = 0; j < Dictionary.wordGroups[i].length; j++) {
 				let group = Dictionary.wordGroups[i][j];
-				arrGroups.push(group);
-				cumulative += group.size();
-				arrCumulative.push(cumulative);
+				if (group !== undefined) {
+					arrGroups.push(group);
+					cumulative += group.size();
+					arrCumulative.push(cumulative);
+				}
 			}
 		}
 
-		console.log(arrGroups.length + " " + arrCumulative.length + " " + cumulative + " in rand word")
 		return Dictionary.findRandomWordInArrays(arrGroups, arrCumulative, cumulative);
 	}
 
