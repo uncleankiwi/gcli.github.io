@@ -7,25 +7,31 @@ Requirements:
 		Every word in the range c1~c2 should have an equal chance of getting chosen, independent of word length.
 	- Check if word w is present within commonality c1~c3 with isWord(String w, int c1, int c3)
  */
+import {rand} from "../helpers.js";
+
 export class WordGroup {
-	map;
+	set;
 	array;
 
 	constructor() {
-		this.map = new Map();
+		this.set = new Set();
 		this.array = [];
 	}
 
 	add(w) {
-		this.map.add(w);
+		this.set.add(w);
 		this.array.push(w);
 	}
 
 	size() {
-		return this.map.size();
+		return this.set.size;
 	}
 
 	isWord(w) {
-		return this.map.has(w);
+		return this.set.has(w);
+	}
+
+	randomWord() {
+		return this.array[rand(0, this.array.length - 1)];
 	}
 }

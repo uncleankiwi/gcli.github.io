@@ -6,7 +6,8 @@ Requirements:
 		Every word in the range c1~c2 should have an equal chance of getting chosen, independent of word length.
 	- Check if word w is present within commonality c1~c3 with isWord(String w, int c1, int c3)
  */
-import {WordGroup} from "./WordGroup";
+import {WordGroup} from "./WordGroup.js";
+import {rand} from "../helpers.js";
 
 export class Dictionary {
 	static initialized = false;
@@ -14,20 +15,32 @@ export class Dictionary {
 	static wordGroups;
 
 	static init() {
+		console.log("Dictionary init");	//todo rm
 		if (Dictionary.initialized) {
 			return;
 		}
-		Dictionary.loadDictionary().then(d => Dictionary.rawDictionary = new Map(Object.entries(d)));
+		(Dictionary.loadDictionary())
+			.then(d => Dictionary.rawDictionary = new Map(Object.entries(d)));
 		this.wordGroups = [];
 
-		Dictionary.rawDictionary.keys().forEach(k => {
-			console.log("key " + k);
+		Dictionary.rawDictionary.forEach(function(value, key) {
+			let set = new Set(value);
+			let commonality = parseInt(key);
+			if (Dictionary.wordGroups[commonality] === undefined) {
+				Dictionary.wordGroups[commonality] = [];
+			}
+			set.forEach(w => {
+				if (Dictionary.wordGroups[commonality][w.length] === undefined) {
+					Dictionary.wordGroups[commonality][w.length] = new WordGroup();
+				}
+				Dictionary.wordGroups[commonality][w.length].add(w);
+			});
 		});
 
 		Dictionary.initialized = true;
 	}
 
-	static loadDictionary() {
+	static async loadDictionary() {
 		return fetch("./resources/dictionary.json")
 			.then(response => {
 				if (!response.ok) {
@@ -39,19 +52,59 @@ export class Dictionary {
 
 
 // - Get random word of length d, of commonality c1~c2 with getRandomWord(int d, int c1, int c2)
-	getRandomWord(d, c1, c2) {
-		//todo
-	}
+	static getRandomWord(d, c1, c2) {
+		let arrGroups = [];
+		let arrCumulative = [];
+		let cumulative = 0;
+		for (let i = c1; i <= c2; i++) {
+			let group = Dictionary.wordGroups[i][d];
+			arrGroups.push(group);
+			cumulative += group.size();
+			arrCumulative.push(cumulative);
+		}
 
+		return Dictionary.findRandomWordInArrays(arrGroups, arrCumulative, cumulative);
+	}
 
 // - Get random word of random length, of commonality c1~c2 with getRandomLengthWord(int c1, int c2)
 // 		Every word in the range c1~c2 should have an equal chance of getting chosen, independent of word length.
-	getRandomLengthWord(c1, c2) {
-		//todo
+	static getRandomLengthWord(c1, c2) {
+		let arrGroups = [];
+		let arrCumulative = [];
+		let cumulative = 0;
+		for (let i = c1; i <= c2; i++) {
+			for (let j = 0; j < Dictionary.wordGroups[i].size; j++) {
+				let group = Dictionary.wordGroups[i][j];
+				arrGroups.push(group);
+				cumulative += group.size();
+				arrCumulative.push(cumulative);
+			}
+		}
+
+		console.log(arrGroups.length + " " + arrCumulative.length + " " + cumulative + " in rand word")
+		return Dictionary.findRandomWordInArrays(arrGroups, arrCumulative, cumulative);
+	}
+
+	//Given an array of WordGroups, an array of cumulative number of words in those groups, and the total
+	//number of words in all of them, get a random word.
+	static findRandomWordInArrays(arrGroups, arrCumulative, cumulative) {
+		let result = rand(0, cumulative);
+		for (let i = 0; i < arrCumulative.length; i++) {
+			if (arrCumulative[i] >= result) {
+				return arrGroups[i].randomWord();
+			}
+		}
 	}
 
 // - Check if word w is present within commonality c1~c3 with isWord(String w, int c1, int c3)
-	isWord(w, c1, c2) {
-		//todo
+	static isWord(w, c1, c2) {
+		let isWord = false;
+		for (let i = c1; i <= c2; i++) {
+			isWord = Dictionary.wordGroups[i][w.length].isWord(w);
+			if (isWord) {
+				break;
+			}
+		}
+		return isWord;
 	}
 }
