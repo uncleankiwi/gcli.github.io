@@ -19,7 +19,7 @@ let log = [];
 let currentInput = "";
 let rowsFilled = 0;
 // let cursorPos = 0;
-let app = new cmd();
+export let app = new cmd();
 let keyState = {"Control":false, "Shift":false, "Alt":false};
 
 setInterval(refreshScreen, 100);

@@ -1,14 +1,22 @@
 import {Application, ApplicationState} from "./helpers.js";
-import {clearLog} from "./bash.js";
+import {clearLog, app} from "./bash.js";
 import {Dictionary} from "./util/Dictionary.js";
 import {GurgleGame} from "./util/GurgleGame.js";
 
 export class gurgle extends Application {
 	game;
+	loading;
 
 	constructor() {
 		super();
-		Dictionary.init();
+		this.loading = true;
+		Dictionary.init().then(
+			function() {
+				app.loading = false;
+		},
+			function(e) {
+				alert(e + " :failed to load dictionary for gurgle.")
+		});
 	}
 
 	redraw() {
@@ -24,6 +32,9 @@ export class gurgle extends Application {
 			return;
 		}
 
+		if (this.loading) {
+			return;
+		}
 		if (this.game === undefined || this.game.won || this.game.lost) {
 			this.game = new GurgleGame(5, 0, 3, 5);
 			clearLog();
@@ -40,7 +51,10 @@ export class gurgle extends Application {
 
 	prompt() {
 		let s;
-		if (this.game === undefined || this.game.lost || this.game.won) {
+		if (this.loading) {
+			s = "Loading...";
+		}
+		else if (this.game === undefined || this.game.lost || this.game.won) {
 			s = "Press enter to start a new game, or 'q' to quit."
 		}
 		else {

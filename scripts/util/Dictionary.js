@@ -14,12 +14,12 @@ export class Dictionary {
 	static rawDictionary;
 	static wordGroups;
 
-	static init() {
+	static async init() {
 		if (Dictionary.initialized) {
 			return;
 		}
-		(Dictionary.loadDictionary())
-			.then(d => Dictionary.rawDictionary = new Map(Object.entries(d)));
+		let data = await Dictionary.loadDictionary();
+		Dictionary.rawDictionary = new Map(Object.entries(data));
 		this.wordGroups = [];
 
 		Dictionary.rawDictionary.forEach(function(value, key) {
