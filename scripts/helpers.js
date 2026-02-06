@@ -55,6 +55,21 @@ export function rand(x, y) {
 	return Math.floor(x + Math.random() * (y - x + 1));
 }
 
+//Attempts to pad spaces to the left of the string such that the string's centre is about 'length' characters
+//from the left.
+export function padToCentre(str) {
+	let spacesToPad = Math.floor(20 - (stripHtml(str).length / 2));
+	for (let i = 0; i < spacesToPad; i++) {
+		str = "&nbsp;" + str;
+	}
+	return str;
+}
+
+//Removes the HTML tags from a string - otherwise padToCentre will count characters in there as well.
+function stripHtml(str) {
+	return (new DOMParser().parseFromString(str, 'text/html').body.textContent) || "";
+}
+
 export function wrapRandomPastelColour(str) {
 	return wrapColour(str, randomPastelColour());
 }

@@ -104,8 +104,6 @@ export function printLine(str) {
 	}
 }
 
-// export const printer = (s) => {printLine(s)};
-
 function swapApplication(startedApp) {
 	// app = new gurgle();
 	app = eval("new " + startedApp + "()");

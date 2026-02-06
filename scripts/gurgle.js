@@ -39,9 +39,12 @@ export class gurgle extends Application {
 	}
 
 	prompt() {
-		let s = "";
-		if (this.game !== undefined) {
-			s = this.game.answer;
+		let s;
+		if (this.game === undefined || this.game.lost || this.game.won) {
+			s = "Press enter to start a new game, or 'q' to quit."
+		}
+		else {
+			s = "Guess? ('q' to quit)";
 		}
 		return s;
 	}

@@ -1,5 +1,5 @@
 import {Dictionary} from "./Dictionary.js";
-import {makeRainbow, wrapColour, wrapRandomPastelColour} from "../helpers.js";
+import {makeRainbow, padToCentre, wrapColour, wrapRandomPastelColour} from "../helpers.js";
 import {printLine} from "../bash.js";
 
 const LETTER_GRADE = Object.freeze({
@@ -159,7 +159,7 @@ export class GurgleGame {
 			}
 			output += wrapColour(c, colour);
 		}
-		printLine(output);
+		printLine(padToCentre(output));
 	}
 
 	static printKeyboardRow(keyArr, keyStatus) {
@@ -186,6 +186,6 @@ export class GurgleGame {
 			}
 			output += wrapColour(c.toUpperCase(), colour);
 		}
-		printLine(output);
+		printLine(padToCentre(output));
 	}
 }
