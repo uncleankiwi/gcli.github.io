@@ -19,11 +19,11 @@ export class hoge extends Application {
 
 	evaluate(command) {
 		super.evaluate(command);
-		printLine("hoge eval")
+		printLine("(unimplemented) evaluate");
 	}
 
 	prompt() {
-		return "hoge prompt: ";
+		return "(unimplemented) prefix";
 	}
 
 	onKeyDown(keyState, e) {

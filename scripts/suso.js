@@ -4,10 +4,10 @@ import {printLine} from "./bash.js";
 export class suso extends Application {
 	evaluate(command) {
 		super.evaluate(command);
-		printLine("suso...")
+		printLine("(unimplemented) evaluate")
 	}
 
 	prompt() {
-		return "suso prefix: ";
+		return "(unimplemented) prefix";
 	}
 }

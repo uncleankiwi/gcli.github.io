@@ -18,7 +18,7 @@ export class gurgle extends Application {
 
 	evaluate(command) {
 		//super.evaluate(command);
-		if (command === "q") {	//Use this to quit instead of "quit", as that word may conflict with the game.
+		if (command === "q") {	//Use this to quit instead of "quit/exit", as those words may conflict with the game.
 			clearLog();
 			this.state = ApplicationState.CLOSE;
 			return;
