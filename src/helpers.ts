@@ -133,10 +133,10 @@ export class Application {
 	updateColour(lastUpdated: Date) {
 		let elements: HTMLCollectionOf<Element> = document.getElementsByClassName("rainbow");
 		for (let i = 0; i < elements.length; i++) {
-			this.updateNodeColour(elements[i], lastUpdated);
+			this.updateNodeColour(elements[i] as HTMLElement, lastUpdated);
 			let children = elements[i].children;
 			for (let j = 0; j < children.length; j++) {
-				this.updateNodeColour(children[j], lastUpdated);
+				this.updateNodeColour(children[j] as HTMLElement, lastUpdated);
 			}
 		}
 	}
@@ -174,10 +174,10 @@ export class Application {
 
 	//Increment colour map and possibly other stuff.
 	stepColour(lastUpdated: Date) {
-		for (const colourTime in this.colourMap.values()) {
-			if (colourTime.time !== lastUpdated) {
-				colourTime.colour.increment(10);
+		this.colourMap.forEach((value: ColourTime) => {
+			if (value.time !== lastUpdated) {
+				value.colour.increment(10);
 			}
-		}
+		});
 	}
 }
