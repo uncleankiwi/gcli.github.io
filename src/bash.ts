@@ -1,13 +1,14 @@
 // noinspection ES6UnusedImports
 
-import {ApplicationState} from "./helpers.js";
+import {Application, ApplicationState} from "./helpers.js";
 import {cmd} from "./cmd.js";
 import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";
 import {suso} from "./suso.js";
 import {Colour} from "./util/Colour.js";
-import {clock} from "./clock.js";
+import clock from "./clock.js";
 import {hoge} from "./hoge.js";
+import {Keystate} from "./util/Keystate";
 
 /*
 Main script. Handles the log and displaying/highlighting of the log.
@@ -15,12 +16,12 @@ Stores which 'application' is currently running, and fetches the input prefix fr
  */
 
 const MAX_LINES = 20;	//Does not include the input line.
-let log = [];
-let currentInput = "";
-let rowsFilled = 0;
+let log: string[] = [];
+let currentInput: string = "";
+let rowsFilled: number = 0;
 // let cursorPos = 0;
-export let app = new cmd();
-let keyState = {"Control":false, "Shift":false, "Alt":false};
+export let app: Application = new cmd();
+let keyState = new Keystate();
 
 setInterval(refreshScreen, 100);
 
@@ -42,14 +43,14 @@ function refreshScreen() {
 	app.redraw();	//Refreshes the log
 }
 
-function onKeyDown(e) {
+function onKeyDown(e: KeyboardEvent) {
 	if (e.key === "Shift" || e.key === "Control" || e.key === "Alt") {
 		updateKeyState(e.key, true);
 	}
 	app.onKeyDown(keyState, e);
 }
 
-function onKeyUp(e) {
+function onKeyUp(e: KeyboardEvent) {
 	if (e.key === "Shift" || e.key === "Control" || e.key === "Alt") {
 		updateKeyState(e.key, false);
 	}
@@ -65,7 +66,7 @@ function onKeyUp(e) {
 		printLine(decorateInput());
 		app.evaluate(currentInput);
 		if (app.state === ApplicationState.CLOSE) {
-			if (app.constructor.a === cmd.name) {
+			if (app.constructor.name === cmd.applicationName) {
 				clearLog();
 				printLine("Cmd restarted.");
 			}
@@ -73,7 +74,7 @@ function onKeyUp(e) {
 		}
 		else if (app.state === ApplicationState.OPEN_APPLICATION) {
 			//Only allow cmd to swap applications.
-			if (app.constructor.name === cmd.name) {
+			if (app.constructor.name === cmd.applicationName) {
 				swapApplication(app.nextApplication);
 			}
 		}
@@ -90,7 +91,7 @@ export function clearLog() {
 }
 
 //Decorates the input line plus prefix (username and all), then appends log with it.
-export function printLine(str) {
+export function printLine(str: string) {
 	if (rowsFilled >= MAX_LINES) {
 		for (let i = 1; i < MAX_LINES; i++) {
 			log[i - 1] = log[i];
@@ -104,7 +105,7 @@ export function printLine(str) {
 	}
 }
 
-function swapApplication(startedApp) {
+function swapApplication(startedApp: string) {
 	// app = new gurgle();
 	app = eval("new " + startedApp + "()");
 }

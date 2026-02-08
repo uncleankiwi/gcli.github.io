@@ -1,5 +1,6 @@
 import {Application} from "./helpers.js";
 import {printLine} from "./bash.js";
+import { Keystate } from "./util/Keystate.js";
 
 const A = "A";
 const B = "B";
@@ -7,17 +8,17 @@ const C = "C";
 const D = "D";
 
 export class hoge extends Application {
-	one;
-	two;
-	oneArr;
-	twoMap;
+	one: string | undefined;
+	two: string | undefined;
+	oneArr: string[] | undefined;
+	twoMap: Map<any, any> | undefined;
 	readRow = 0;
 	a = "";
 	b = "";
 	c = "";
-	threeArr;
+	threeArr: { [x: string]: any; }[] | { A: string; B: string; C: string; D: string; }[] | undefined;
 
-	evaluate(command) {
+	evaluate(command: string) {
 		super.evaluate(command);
 		printLine("(unimplemented) evaluate");
 	}
@@ -26,9 +27,9 @@ export class hoge extends Application {
 		return "(unimplemented) prefix";
 	}
 
-	onKeyDown(keyState, e) {
+	onKeyDown(keyState: Keystate, e: KeyboardEvent) {
 		super.onKeyDown(keyState, e);
-		if (keyState["Control"] === true && e.key === 'v') {
+		if (keyState.Control && e.key === 'v') {
 			let p = navigator.clipboard.readText();
 			if (this.one === undefined) {
 				p.then((value) => {

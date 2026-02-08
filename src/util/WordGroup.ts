@@ -10,15 +10,15 @@ Requirements:
 import {rand} from "../helpers.js";
 
 export class WordGroup {
-	set;
-	array;
+	set: Set<string>;
+	array: string[];
 
 	constructor() {
 		this.set = new Set();
 		this.array = [];
 	}
 
-	add(w) {
+	add(w: string) {
 		this.set.add(w);
 		this.array.push(w);
 	}
@@ -27,7 +27,7 @@ export class WordGroup {
 		return this.set.size;
 	}
 
-	isWord(w) {
+	isWord(w: string) {
 		return this.set.has(w);
 	}
 

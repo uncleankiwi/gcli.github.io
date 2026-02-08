@@ -97,13 +97,13 @@ const BIG_CHAR = [[
 	"m m m",
 	"m m m"
 ]]
-let BIG_NUM_COLOUR = [];
-let BIG_CHAR_COLOUR = [];
+let BIG_NUM_COLOUR: string[][] = [];
+let BIG_CHAR_COLOUR: string[][] = [];
 
-let previousSecond;
+let previousSecond: number;
 let initialized = false;
 
-export class clock extends Application {
+class clock extends Application {
 	constructor() {
 		super();
 		if (!initialized) {
@@ -113,7 +113,7 @@ export class clock extends Application {
 		}
 	}
 
-	evaluate(command) {
+	evaluate(_command: string) {
 		clearLog();
 		this.state = ApplicationState.CLOSE;
 	}
@@ -179,7 +179,7 @@ export class clock extends Application {
 
 	//Append a number. If appending a single digit, append 0 before that.
 	//Otherwise, append each digit one after another.
-	appendNumToArray(arr, num, inColour) {
+	appendNumToArray(arr: string[], num: number, inColour: boolean) {
 		if (num < 10) {
 			this.appendToArray(arr, 0, inColour);
 			this.appendToArray(arr, num, inColour);
@@ -191,8 +191,8 @@ export class clock extends Application {
 	}
 
 	//Translate x to its array counterpart using the constants above, then append the arrays to the given one.
-	appendToArray(arr, x, inColour) {
-		if (0 <= x && x <= 9) {
+	appendToArray(arr: string[], x: string | number, inColour: boolean) {
+		if ((typeof x === "number") && 0 <= x && x <= 9) {
 			this.appendWithBigArray(arr, BIG_NUM[x], BIG_NUM_COLOUR[x], inColour);
 		}
 		else {
@@ -215,7 +215,7 @@ export class clock extends Application {
 		}
 	}
 
-	appendWithBigArray(arr, arrBigPlain, arrBigColour, inColour) {
+	appendWithBigArray(arr: string[], arrBigPlain: string[], arrBigColour: string[], inColour: boolean) {
 		for (let i = 0; i < arr.length; i++) {
 			if (!inColour) {
 				arr[i] += arrBigPlain[i] + NBSP;
@@ -231,7 +231,7 @@ export class clock extends Application {
 	//So we have to replace all spaces with &nbsp; in the constants.
 	//Also, non-space characters are replaced with a box for greater readability.
 	//colourCopy argument is where a copy of the array - but coloured - is output.
-	replaceCharsAndGetColourCopy(arr, colourCopy) {
+	replaceCharsAndGetColourCopy(arr: string[][], colourCopy: string[][]) {
 		for (let i = 0; i < arr.length; i++) {
 			let arr2 = arr[i];
 			for (let j = 0; j < arr2.length; j++) {
@@ -264,3 +264,5 @@ export class clock extends Application {
 		}
 	}
 }
+
+export default clock

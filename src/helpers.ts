@@ -3,14 +3,14 @@ import {Colour} from "./util/Colour.js";
 //To prevent generating fresh colours and creating bloat in each application's colour map,
 //at most 100 pastel colours will be generated, then old ones will be reused.
 const MAX_PASTEL_COLOURS = 100;
-let pastelColourArr = [];
+let pastelColourArr: string[] = [];
 let pastelColourIndex = 0;
 
-export function wrapColour(str, colour) {
+export function wrapColour(str: string, colour: string | undefined) {
 	 return wrapColourHead(colour) + str + wrapColourTail();
 }
 
-export function wrapColourHead(colour) {
+export function wrapColourHead(colour: string | undefined) {
 	return '<span style="color: ' + colour + '">';
 }
 
@@ -18,7 +18,7 @@ export function wrapColourTail() {
 	return '</span>';
 }
 
-export function makeRainbow(str) {
+export function makeRainbow(str: string) {
 	return  makeRainbowHead() + str + makeRainbowTail()
 }
 
@@ -51,13 +51,13 @@ export function randomPastelColour() {
 }
 
 //Generates an integer between x and y
-export function rand(x, y) {
+export function rand(x: number, y: number) {
 	return Math.floor(x + Math.random() * (y - x + 1));
 }
 
 //Attempts to pad spaces to the left of the string such that the string's centre is about 'length' characters
 //from the left.
-export function padToCentre(str) {
+export function padToCentre(str: string) {
 	let spacesToPad = Math.floor(20 - (stripHtml(str).length / 2));
 	for (let i = 0; i < spacesToPad; i++) {
 		str = "&nbsp;" + str;
@@ -66,15 +66,15 @@ export function padToCentre(str) {
 }
 
 //Removes the HTML tags from a string - otherwise padToCentre will count characters in there as well.
-function stripHtml(str) {
+function stripHtml(str: string) {
 	return (new DOMParser().parseFromString(str, 'text/html').body.textContent) || "";
 }
 
-export function wrapRandomPastelColour(str) {
+export function wrapRandomPastelColour(str: string) {
 	return wrapColour(str, randomPastelColour());
 }
 
-export function wrapIndividualCharsWithRandomPastelColours(str) {
+export function wrapIndividualCharsWithRandomPastelColours(str: string) {
 	let output = "";
 	for (let i = 0; i < str.length; i++) {
 		output += wrapRandomPastelColour(str.charAt(i));
@@ -85,7 +85,7 @@ export function wrapIndividualCharsWithRandomPastelColours(str) {
 export class Application {
 	static EXIT = "exit";
 	static QUIT = "quit";
-	static name;
+	static applicationName: string;
 	static help = ["No additional info available for this application."];
 
 	//Stores colours and whatever they're supposed to be transformed into.
@@ -93,9 +93,9 @@ export class Application {
 	//But it shouldn't come to that, since this is stored per-application.
 	colourMap = new Map();
 
-	state = ApplicationState.OPEN;
+	state: number = ApplicationState.OPEN;
 
-	evaluate(command) {
+	evaluate(command: string) {
 		if (command === Application.EXIT || command === Application.QUIT) {
 			this.state = ApplicationState.CLOSE;
 		}
@@ -110,16 +110,16 @@ export class Application {
 	}
 
 	//Used for detecting key combinations like ctrl+C.
-	onKeyDown(keyState, e) {
+	onKeyDown(keyState: { Control: boolean; Shift: boolean; Alt: boolean; }, e: KeyboardEvent) {
 
 	}
 
-	step(lastUpdated) {
+	step(lastUpdated: Date) {
 		this.stepColour(lastUpdated)
 	}
 
 	//Animate the "rainbow" span itself, and also any of its children. Grandchildren and onwards aren't animated.
-	updateColour(lastUpdated) {
+	updateColour(lastUpdated: Date) {
 		let elements = document.getElementsByClassName("rainbow");
 		for (let i = 0; i < elements.length; i++) {
 			this.updateNodeColour(elements[i], lastUpdated);
@@ -138,7 +138,7 @@ export class Application {
 	//If colour is not in map, put it in.
 	//If colour is in map and time is current, set colour to the map's value.
 	//Colour incrementation has been moved to stepColour() so colour can be refreshed whenever keyUp happens.
-	updateNodeColour(element, lastUpdated) {
+	updateNodeColour(element: HTMLElement, lastUpdated: Date) {
 		let cssColour = element.style.color;
 		if (cssColour === "") {
 			cssColour = window.getComputedStyle(element).getPropertyValue("color");
@@ -157,8 +157,8 @@ export class Application {
 	}
 
 	//Increment colour map and possibly other stuff.
-	stepColour(lastUpdated) {
-		this.colourMap.values().forEach(x => {
+	stepColour(lastUpdated: Date) {
+		this.colourMap.values().forEach((x: { time: Date; colour: { increment: (arg0: number) => void; }; }) => {
 			if (x.time !== lastUpdated) {
 				x.colour.increment(10);
 			}

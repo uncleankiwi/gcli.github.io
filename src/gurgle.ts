@@ -4,7 +4,7 @@ import {Dictionary} from "./util/Dictionary.js";
 import {GurgleGame} from "./util/GurgleGame.js";
 
 export class gurgle extends Application {
-	game;
+	game: GurgleGame | undefined;
 	loading;
 	// noinspection HttpUrlsUsage
 	static help = ["&nbsp;&nbsp;&nbsp;&nbsp;A clone of that famous word puzzle.",
@@ -18,7 +18,7 @@ export class gurgle extends Application {
 		this.loading = true;
 		Dictionary.init().then(
 			function() {
-				app.loading = false;
+				(app as gurgle).loading = false;
 		},
 			function(e) {
 				alert(e + " :failed to load dictionary for gurgle.")
@@ -30,7 +30,7 @@ export class gurgle extends Application {
 		this.updateColour(new Date());
 	}
 
-	evaluate(command) {
+	evaluate(command: string) {
 		//super.evaluate(command);
 		if (command === "q") {	//Use this to quit instead of "quit/exit", as those words may conflict with the game.
 			clearLog();
