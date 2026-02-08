@@ -17,14 +17,14 @@ import clock from "./clock.js";
 import {hoge} from "./hoge.js";
 
 export class cmd extends Application {
-	static name = "cmd";
+	static applicationName = "cmd";
 	static HELP = "help";
 	static RAINBOW = "rainbow";
 	static CLEAR = "clear";
 
 	//Only the keys (the application names) will be used for now.
 	//The values could hold application options/a short description in the future?
-	directory = new Map([
+	directory: Map<string, string> = new Map([
 		["gurgle", ''],
 		["mm", ''],
 		["suso", ''],
@@ -40,7 +40,7 @@ export class cmd extends Application {
 	}
 
 	//Run the function stored in the map if the key matches.
-	evaluate(command) {
+	evaluate(command: string) {
 		let commandArgs = command.split(" ");
 		super.evaluate(commandArgs[0]);
 		if (this.state === ApplicationState.CLOSE) {
@@ -72,7 +72,9 @@ export class cmd extends Application {
 				printLine("Executable scripts (may not be implemented):");
 				printLine("");
 				let keys = this.directory.keys();
-				keys.forEach(key => printLine(key));
+				for (const key of keys) {
+					printLine(key);
+				}
 			}
 		}
 		else if (commandArgs[0] === cmd.RAINBOW) {

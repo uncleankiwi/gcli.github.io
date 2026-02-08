@@ -2,12 +2,12 @@ import {Dictionary} from "./Dictionary.js";
 import {makeRainbow, padToCentre, wrapColour, wrapRandomPastelColour} from "../helpers.js";
 import {printLine} from "../bash.js";
 
-const LETTER_GRADE = Object.freeze({
-	DEFAULT: 0,
-	CORRECT: 1,
-	WRONG_LOC: 2,
-	WRONG: 3
-});
+enum LETTER_GRADE {
+	DEFAULT,
+	CORRECT,
+	WRONG_LOC,
+	WRONG
+}
 
 const KEYBOARD_UPPER = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
 const KEYBOARD_MID = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
@@ -17,8 +17,8 @@ export class GurgleGame {
 	answer;
 	answerArr;
 	static MAX_ATTEMPTS = 6;
-	attempts;
-	grades;
+	attempts: string[][];
+	grades: LETTER_GRADE[][];
 	c1;
 	c2;
 	c3;
@@ -31,7 +31,7 @@ export class GurgleGame {
 
 	//Start a new game with word length l, and commonality ranging between c1 and c2 inclusive.
 	//Attempts made will be checked against commonality range c1 to c3.
-	constructor(l, c1, c2, c3) {
+	constructor(l: number, c1: number, c2: number, c3: number) {
 		this.c1 = c1;
 		this.c2 = c2;
 		this.c3 = c3;
@@ -39,7 +39,7 @@ export class GurgleGame {
 		this.lost = false;
 		this.answer = Dictionary.getRandomWord(l, c1, c2);
 		this.answerArr = [...this.answer];
-		this.keyStatus = new Map();
+		this.keyStatus = new Map<string, LETTER_GRADE>();
 		this.statusDisplay = "";
 		this.setKeyToDefault(KEYBOARD_UPPER);
 		this.setKeyToDefault(KEYBOARD_MID);
@@ -54,11 +54,11 @@ export class GurgleGame {
 		this.grades = [];
 	}
 
-	setKeyToDefault(keyArr) {
+	setKeyToDefault(keyArr: string[]) {
 		keyArr.forEach(k => {this.keyStatus.set(k, LETTER_GRADE.DEFAULT)});
 	}
 
-	grade(attempt) {
+	grade(attempt: string) {
 		if (this.won || this.lost) {
 			return;
 		}
@@ -132,7 +132,7 @@ export class GurgleGame {
 		printLine(this.statusDisplay);
 	}
 
-	static printAttemptLine(charArr, gradeArr) {
+	static printAttemptLine(charArr: string[], gradeArr: LETTER_GRADE[]) {
 		let output = "";
 		for (let i = 0; i < charArr.length; i++) {
 			if (i !== 0) {
@@ -162,7 +162,7 @@ export class GurgleGame {
 		printLine(padToCentre(output));
 	}
 
-	static printKeyboardRow(keyArr, keyStatus) {
+	static printKeyboardRow(keyArr: string[], keyStatus: Map<string, LETTER_GRADE>) {
 		let output = "";
 		for (let i = 0; i < keyArr.length; i++) {
 			if (i !== 0) {

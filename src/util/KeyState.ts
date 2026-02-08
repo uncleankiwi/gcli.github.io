@@ -1,5 +1,5 @@
 
-export class Keystate {
+export class KeyState {
 	Control: boolean;
 	Shift: boolean;
 	Alt: boolean

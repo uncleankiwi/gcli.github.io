@@ -28,10 +28,10 @@ class GameData {
 	places = 4;
 	won = false;
 	lost = false;
-	answer = [];	//Holds the answer.
+	answer: number[] = [];	//Holds the answer.
 	attemptCount = 0;
-	attempts = [];	//Holds the attempts; each attempt is also a [];
-	grades = [];	//Holds the grades for each attempt; each grade is also a [];
+	attempts: (string | number)[][] = [];	//Holds the attempts; each attempt is also a [];
+	grades: any[] = [];	//Holds the grades for each attempt; each grade is also a [];
 
 	constructor() {
 	}
@@ -47,8 +47,8 @@ class GameData {
 	}
 
 	//Parse the first 'places' non-space characters and puts them in an array.
-	parseDigits(inputString) {
-		let output = [];
+	parseDigits(inputString: string) {
+		let output: (number | string)[] = [];
 		let stringIndex = 0;
 		for (let arrIndex = 0; arrIndex < this.places; arrIndex++) {
 			//If input string is too short for the answer, fill the rest of the places with '?'.
@@ -80,15 +80,15 @@ class GameData {
 	//positions and colours otherwise.
 	grade() {
 		//Checking if every input is valid
-		let previousGrade = [];
+		let previousGrade:  = [];
 		let previousAttempt = this.attempts[this.attemptCount - 1];
-		let attemptMap = new Map();
-		let answerMap = new Map();
+		let attemptMap: Map<string | number, number> = new Map();
+		let answerMap: Map<number, number> = new Map();
 		let correctColourAndPos = 0;
 		let correctColour = 0;
 		for (let i = 0; i < this.places; i++) {
 			let attemptToken = previousAttempt[i];
-			if (attemptToken >= 1 && attemptToken <= this.colours) {
+			if (typeof(attemptToken) === "number" && attemptToken >= 1 && attemptToken <= this.colours) {
 				let answerToken = this.answer[i];
 				if (attemptToken === answerToken) {
 					//Go through each position, and if it's correct, increment correctColourAndPos.
@@ -162,7 +162,7 @@ export class mm extends Application {
 		super();
 	}
 
-	evaluate(command) {
+	evaluate(command: string) {
 		super.evaluate(command);
 		if (this.state === ApplicationState.CLOSE) {
 			clearLog();

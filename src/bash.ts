@@ -8,7 +8,7 @@ import {suso} from "./suso.js";
 import {Colour} from "./util/Colour.js";
 import clock from "./clock.js";
 import {hoge} from "./hoge.js";
-import {Keystate} from "./util/Keystate";
+import {KeyState} from "./util/KeyState";
 
 /*
 Main script. Handles the log and displaying/highlighting of the log.
@@ -21,7 +21,7 @@ let currentInput: string = "";
 let rowsFilled: number = 0;
 // let cursorPos = 0;
 export let app: Application = new cmd();
-let keyState = new Keystate();
+let keyState = new KeyState();
 
 setInterval(refreshScreen, 100);
 

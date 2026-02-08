@@ -11,8 +11,8 @@ import {rand} from "../helpers.js";
 
 export class Dictionary {
 	static initialized = false;
-	static rawDictionary;
-	static wordGroups;
+	static rawDictionary: Map<string, Set<string>>;
+	static wordGroups: WordGroup[][];
 
 	static async init() {
 		if (Dictionary.initialized) {
@@ -51,7 +51,7 @@ export class Dictionary {
 
 
 // - Get random word of length d, of commonality c1~c2 with getRandomWord(int d, int c1, int c2)
-	static getRandomWord(d, c1, c2) {
+	static getRandomWord(d: number, c1: number, c2: number) {
 		let arrGroups = [];
 		let arrCumulative = [];
 		let cumulative = 0;
@@ -67,9 +67,9 @@ export class Dictionary {
 
 // - Get random word of random length, of commonality c1~c2 with getRandomLengthWord(int c1, int c2)
 // 		Every word in the range c1~c2 should have an equal chance of getting chosen, independent of word length.
-	static getRandomLengthWord(c1, c2) {
-		let arrGroups = [];
-		let arrCumulative = [];
+	static getRandomLengthWord(c1: number, c2: number) {
+		let arrGroups: WordGroup[] = [];
+		let arrCumulative: number[] = [];
 		let cumulative = 0;
 		for (let i = c1; i <= c2; i++) {
 			for (let j = 0; j < Dictionary.wordGroups[i].length; j++) {
@@ -87,17 +87,18 @@ export class Dictionary {
 
 	//Given an array of WordGroups, an array of cumulative number of words in those groups, and the total
 	//number of words in all of them, get a random word.
-	static findRandomWordInArrays(arrGroups, arrCumulative, cumulative) {
-		let result = rand(0, cumulative);
+	static findRandomWordInArrays(arrGroups: WordGroup[], arrCumulative: number[], cumulative: number): string {
+		let result = rand(0, cumulative - 1);	//-1 because it's the array index
 		for (let i = 0; i < arrCumulative.length; i++) {
 			if (arrCumulative[i] >= result) {
 				return arrGroups[i].randomWord();
 			}
 		}
+		throw Error("Error finding a random word using findRandomWordInArrays()");
 	}
 
 // - Check if word w is present within commonality c1~c3 with isWord(String w, int c1, int c3)
-	static isWord(w, c1, c2) {
+	static isWord(w: string, c1: any, c2: number) {
 		let isWord = false;
 		for (let i = c1; i <= c2; i++) {
 			isWord = Dictionary.wordGroups[i][w.length].isWord(w);

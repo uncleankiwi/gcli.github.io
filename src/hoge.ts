@@ -1,6 +1,6 @@
 import {Application} from "./helpers.js";
 import {printLine} from "./bash.js";
-import { Keystate } from "./util/Keystate.js";
+import { KeyState } from "./util/KeyState";
 
 const A = "A";
 const B = "B";
@@ -27,7 +27,7 @@ export class hoge extends Application {
 		return "(unimplemented) prefix";
 	}
 
-	onKeyDown(keyState: Keystate, e: KeyboardEvent) {
+	onKeyDown(keyState: KeyState, e: KeyboardEvent) {
 		super.onKeyDown(keyState, e);
 		if (keyState.Control && e.key === 'v') {
 			let p = navigator.clipboard.readText();
@@ -182,7 +182,7 @@ export class hoge extends Application {
 	}
 
 	parseTwo() {
-		let twoArrTabbed = this.two.split("\n");
+		let twoArrTabbed = (this.two as string).split("\n");
 		for (let i = 0; i < twoArrTabbed.length; i++) {
 			let twoArrRow = twoArrTabbed[i].split("\t");
 			let a = twoArrRow[3];
@@ -190,7 +190,7 @@ export class hoge extends Application {
 			if (a === undefined && d === undefined) {
 				continue;
 			}
-			if (this.twoMap.has(a)) {
+			if ((this.twoMap as Map).has(a)) {
 				alert(`Warning: Two has multiple occurrences of ${a}.`);
 				this.twoMap.get(a).push(d);
 			}

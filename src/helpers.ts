@@ -120,7 +120,7 @@ export class Application {
 
 	//Animate the "rainbow" span itself, and also any of its children. Grandchildren and onwards aren't animated.
 	updateColour(lastUpdated: Date) {
-		let elements = document.getElementsByClassName("rainbow");
+		let elements: HTMLCollectionOf<Element> = document.getElementsByClassName("rainbow");
 		for (let i = 0; i < elements.length; i++) {
 			this.updateNodeColour(elements[i], lastUpdated);
 			let children = elements[i].children;

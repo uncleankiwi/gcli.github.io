@@ -8,14 +8,14 @@ export class Colour {
 	h = 0;
 	s = 0;
 	v = 0;
-	constructor(colourString) {
+	constructor(colourString: string) {
 		this.raw = colourString;
 		this.stringToRGB();
 		this.convertToHSV();
 	}
 
 	//step: how much the hue should be increased by.
-	increment(step) {
+	increment(step: number) {
 		this.h += (step / 100);
 		this.h %= 1;
 		this.convertToRGB();
@@ -25,7 +25,7 @@ export class Colour {
 
 	//Write the RGB values given the rgb(xx, yy, zz) input string.
 	stringToRGB() {
-		[this.r, this.g, this.b] = this.raw.match(/\d+/g).map(Number);
+		[this.r, this.g, this.b] = (this.raw.match(/\d+/g) as RegExpMatchArray).map(Number);
 		this.r /= 255;
 		this.g /= 255;
 		this.b /= 255;
