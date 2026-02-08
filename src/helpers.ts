@@ -7,7 +7,7 @@ const MAX_PASTEL_COLOURS = 100;
 let pastelColourArr: string[] = [];
 let pastelColourIndex = 0;
 
-export function wrapColour(str: string, colour: string | undefined) {
+export function wrapColour(str: string | number, colour: string | undefined) {
 	 return wrapColourHead(colour) + str + wrapColourTail();
 }
 

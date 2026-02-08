@@ -7,14 +7,14 @@ import {
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
-const MMState = Object.freeze({
-	TITLE: 0,
-	CHOOSE_COLOURS: 1,
-	CHOOSE_CHANCES: 2,
-	CHOOSE_PLACES: 3,
-	IN_PROGRESS: 4,
-	DONE: 5
-})
+enum MMState {
+	TITLE,
+	CHOOSE_COLOURS,
+	CHOOSE_CHANCES,
+	CHOOSE_PLACES,
+	IN_PROGRESS,
+	DONE
+}
 
 class GameData {
 	minColours = 1;
@@ -80,7 +80,7 @@ class GameData {
 	//positions and colours otherwise.
 	grade() {
 		//Checking if every input is valid
-		let previousGrade:  = [];
+		let previousGrade: number[] | null = [];
 		let previousAttempt = this.attempts[this.attemptCount - 1];
 		let attemptMap: Map<string | number, number> = new Map();
 		let answerMap: Map<number, number> = new Map();
@@ -109,8 +109,8 @@ class GameData {
 		//Increment correctColour based on the two maps.
 		if (previousGrade != null) {
 			attemptMap.forEach(function(value, key) {
-				if (answerMap.has(key)) {
-					correctColour += Math.min(value, answerMap.get(key));
+				if (typeof(key) === "number" && answerMap.has(key)) {
+					correctColour += Math.min(value, answerMap.get(key) as number);
 				}
 			})
 			previousGrade = [correctColourAndPos, correctColour];
@@ -127,9 +127,9 @@ class GameData {
 		}
 	}
 
-	incrementMap(map, k) {
+	incrementMap(map: Map<string | number, number>, k: number) {
 		if (map.has(k)) {
-			map.set(k, map.get(k) + 1);
+			map.set(k, (map.get(k) as number) + 1);
 		}
 		else {
 			map.set(k, 1);
@@ -302,11 +302,11 @@ export class mm extends Application {
 		printLine(strStats);
 	}
 
-	wrapToken(k) {
+	wrapToken(k: number | string) {
 		return wrapColour(k, this.colourFromNumber(k));
 	}
 
-	colourFromNumber(k) {
+	colourFromNumber(k: number | string) {
 		switch (k) {
 			case 1:
 				return "#aaaa55";
