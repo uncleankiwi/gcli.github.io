@@ -103,7 +103,7 @@ let BIG_CHAR_COLOUR: string[][] = [];
 let previousSecond: number;
 let initialized = false;
 
-class clock extends Application {
+export class clock extends Application {
 	constructor() {
 		super();
 		if (!initialized) {

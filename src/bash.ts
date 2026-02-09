@@ -1,4 +1,3 @@
-// noinspection ES6UnusedImports
 
 import {Application, ApplicationState} from "./helpers.js";
 import {cmd} from "./cmd.js";
@@ -6,9 +5,9 @@ import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";
 import {suso} from "./suso.js";
 import {Colour} from "./util/Colour.js";
-import clock from "./clock.js";
+import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
-import {KeyState} from "./util/KeyState";
+import {KeyState} from "./util/KeyState.js";
 
 /*
 Main script. Handles the log and displaying/highlighting of the log.
@@ -106,8 +105,7 @@ export function printLine(str: string) {
 }
 
 function swapApplication(startedApp: string) {
-	// app = new gurgle();
-	app = eval("new " + startedApp + "()");
+	app = eval(`new ${startedApp}();`);
 }
 
 //Prints out every line of log.

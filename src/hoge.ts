@@ -1,6 +1,6 @@
 import {Application} from "./helpers.js";
 import {printLine} from "./bash.js";
-import { KeyState } from "./util/KeyState";
+import { KeyState } from "./util/KeyState.js";
 
 const A = "A";
 const B = "B";

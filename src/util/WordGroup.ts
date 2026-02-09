@@ -1,5 +1,4 @@
 
-
 /*
 Requirements:
 	- Get random word of length d, of commonality c1~c2 with getRandomWord(int d, int c1, int c2)
