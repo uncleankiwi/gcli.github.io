@@ -41,11 +41,11 @@ export function makeRainbow(s: string | LogNode) {
 	return node;
 }
 
-export const ApplicationState = Object.freeze({
-	CLOSE: 0,
-	OPEN: 1,
-	OPEN_APPLICATION: 2
-})
+export enum ApplicationState {
+	CLOSE,
+	OPEN,
+	OPEN_APPLICATION
+}
 
 //Generates a limited number of pastel colours before it starts using old ones.
 export function randomPastelColour() {
