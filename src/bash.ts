@@ -136,22 +136,22 @@ export class LogNode {
 	}
 
 	toString() {
+		let output = "";
+		if (this.colour != undefined) {
+			output += `<span style = color:${this.colour.raw}>`;
+		}
 		if (this.str !== undefined) {
-			return this.str;
+			output += this.str;
 		}
 		else {
-			let output = "";
-			if (this.colour != undefined) {
-				output += `<span style = color:'${this.colour.raw}'>;`;
-			}
 			for (let i = 0; i < this.children!.length; i++) {
 				output += this.children![i].toString();
 			}
-			if (this.colour != undefined) {
-				output += "</span>";
-			}
-			return output;
 		}
+		if (this.colour != undefined) {
+			output += "</span>";
+		}
+		return output;
 	}
 }
 
