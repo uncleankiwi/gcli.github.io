@@ -1,5 +1,5 @@
-import { Application, ApplicationState, makeRainbow, randomPastelColour, wrapColourHead, wrapColourTail } from "./helpers.js";
-import { clearLog, printLine } from "./bash.js";
+import { Application, ApplicationState, makeRainbow, wrapRandomPastelColour } from "./helpers.js";
+import { clearLog, LogNode, printLine } from "./bash.js";
 const BLOCK_CHAR = "&#x2588;";
 const NBSP = "&nbsp;";
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -218,22 +218,17 @@ export class clock extends Application {
                 arr2[j] = arr2[j].replaceAll(" ", NBSP);
                 //Manually copy, because each character needs a different call to wrapRandomPastelColour
                 //Or else the entire row will have the same colour and animation.
-                let str = "";
+                let nodeArr = [];
                 let matchesArr = arr2[j].split(BLOCK_CHAR);
                 for (let k = 0; k < matchesArr.length; k++) {
-                    //If it's not the first element, close the tag of the decorated block character before it.
+                    //If this is not the first element, insert a node containing a block character before it.
                     if (k !== 0) {
-                        str += wrapColourTail();
+                        nodeArr.push(makeRainbow(wrapRandomPastelColour(BLOCK_CHAR)));
                     }
-                    str += matchesArr[k];
-                    //If it's not the last element, put a decorated block character after it.
-                    if (k !== matchesArr.length - 1) {
-                        str += wrapColourHead(randomPastelColour()) + BLOCK_CHAR;
-                    }
+                    nodeArr.push(matchesArr[k]);
                 }
-                colourCopy[i][j] = makeRainbow(str);
+                colourCopy[i][j] = nodeArr;
             }
         }
     }
 }
-export default clock;

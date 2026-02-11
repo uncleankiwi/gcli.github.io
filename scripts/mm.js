@@ -1,4 +1,4 @@
-import { Application, ApplicationState, makeRainbow, wrapColour, wrapIndividualCharsWithRandomPastelColours } from "./helpers.js";
+import { Application, ApplicationState, makeRainbow, wrapColour, wrapCharsWithPastelAndRainbow } from "./helpers.js";
 import { clearLog, printLine } from "./bash.js";
 var MMState;
 (function (MMState) {
@@ -138,7 +138,7 @@ export class mm extends Application {
         this.inProgressString1 = "Enter "; //+ this.gameData.places
         this.inProgressString2 = " digits from 1 to "; // + this.gameData.colours
         this.inProgressString3 = " : ";
-        this.winString = makeRainbow(wrapIndividualCharsWithRandomPastelColours("You win!"));
+        this.winString = makeRainbow(wrapCharsWithPastelAndRainbow("You win!"));
         this.loseString = wrapColour("You lose...", "#555555");
         this.nextGameString = "Press Enter to begin another game, or 'q' to quit.";
     }

@@ -2,12 +2,12 @@
 Default application loaded by bash.
 Contains a directory of applications that can be loaded.
  */
-import { Application, ApplicationState, makeRainbow, wrapColour, wrapIndividualCharsWithRandomPastelColours } from "./helpers.js";
+import { Application, ApplicationState, makeRainbow, wrapColour, wrapCharsWithPastelAndRainbow } from "./helpers.js";
 import { clearLog, printLine } from "./bash.js";
 import { gurgle } from "./gurgle.js";
 import { mm } from "./mm.js";
 import { suso } from "./suso.js";
-import clock from "./clock.js";
+import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
 export class cmd extends Application {
     constructor() {
@@ -64,7 +64,7 @@ export class cmd extends Application {
             }
         }
         else if (commandArgs[0] === cmd.RAINBOW) {
-            printLine(makeRainbow(wrapIndividualCharsWithRandomPastelColours("Rainbow text rainbow text rainbow text.")));
+            printLine((wrapCharsWithPastelAndRainbow("Rainbow text rainbow text rainbow text.")));
         }
         else if (commandArgs[0] === cmd.CLEAR) {
             clearLog();

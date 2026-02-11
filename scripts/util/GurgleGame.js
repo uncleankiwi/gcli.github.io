@@ -1,6 +1,6 @@
 import { Dictionary } from "./Dictionary.js";
 import { makeRainbow, padToCentre, wrapColour, wrapRandomPastelColour } from "../helpers.js";
-import { printLine } from "../bash.js";
+import { LogNode, printArray, printLine } from "../bash.js";
 var LETTER_GRADE;
 (function (LETTER_GRADE) {
     LETTER_GRADE[LETTER_GRADE["DEFAULT"] = 0] = "DEFAULT";
@@ -23,7 +23,7 @@ export class GurgleGame {
         this.answer = Dictionary.getRandomWord(l, c1, c2);
         this.answerArr = [...this.answer];
         this.keyStatus = new Map();
-        this.statusDisplay = "";
+        this.statusDisplay = [];
         this.setKeyToDefault(KEYBOARD_UPPER);
         this.setKeyToDefault(KEYBOARD_MID);
         this.setKeyToDefault(KEYBOARD_LOWER);
@@ -45,14 +45,14 @@ export class GurgleGame {
         }
         //Check if it's a word of suitable length and is in the word lists within the c1~c3 range.
         if (attempt.length !== this.answer.length) {
-            this.statusDisplay = "Word length wrong.";
+            this.statusDisplay = [new LogNode("Word length wrong.")];
             return;
         }
         if (!Dictionary.isWord(attempt, this.c1, this.c3)) {
-            this.statusDisplay = attempt + " is not in word list.";
+            this.statusDisplay = [new LogNode(attempt + " is not in word list.")];
             return;
         }
-        this.statusDisplay = "";
+        this.statusDisplay = [new LogNode("")];
         let attemptArr = [...attempt]; //Splits the attempt into individual characters
         let gradeArr = [];
         this.attempts.push(attemptArr);
@@ -78,12 +78,12 @@ export class GurgleGame {
         //Check for win
         if (!anyWrongChar) {
             this.won = true;
-            this.statusDisplay = makeRainbow(wrapRandomPastelColour("You win!"));
+            this.statusDisplay = [makeRainbow(wrapRandomPastelColour("You win!"))];
         }
         //check for loss
         else if (this.grades.length >= GurgleGame.MAX_ATTEMPTS) {
             this.lost = true;
-            this.statusDisplay = wrapColour("You lose...", "#555555") + " Answer: " + this.answer;
+            this.statusDisplay = [wrapColour("You lose...", "#555555"), " Answer: ", this.answer];
         }
     }
     draw() {
@@ -102,7 +102,7 @@ export class GurgleGame {
         GurgleGame.printKeyboardRow(KEYBOARD_MID, this.keyStatus);
         GurgleGame.printKeyboardRow(KEYBOARD_LOWER, this.keyStatus);
         //Print status bar
-        printLine(this.statusDisplay);
+        printArray(this.statusDisplay);
     }
     static printAttemptLine(charArr, gradeArr) {
         let output = "";

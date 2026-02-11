@@ -1,6 +1,6 @@
 import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
-import {AnimationType, LogNode} from "./bash";
+import {AnimationType, LogNode} from "./bash.js";
 
 //To prevent generating fresh colours and creating bloat in each application's colour map,
 //at most 100 pastel colours will be generated, then old ones will be reused.

@@ -1,33 +1,48 @@
 import { Colour } from "./util/Colour.js";
 import { KeyState } from "./util/KeyState.js";
+import { AnimationType, LogNode } from "./bash";
 //To prevent generating fresh colours and creating bloat in each application's colour map,
 //at most 100 pastel colours will be generated, then old ones will be reused.
 const MAX_PASTEL_COLOURS = 100;
 let pastelColourArr = [];
 let pastelColourIndex = 0;
-export function wrapColour(str, colour) {
-    return wrapColourHead(colour) + str + wrapColourTail();
+export function wrapColour(s, colour) {
+    let node;
+    if (s instanceof LogNode) {
+        node = s;
+    }
+    else {
+        let text;
+        if (typeof (s) === "number") {
+            text = s.toString();
+        }
+        else {
+            text = s;
+        }
+        node = new LogNode(text);
+    }
+    if (colour !== undefined) {
+        node.colour = new Colour(colour);
+    }
+    return node;
 }
-export function wrapColourHead(colour) {
-    return '<span style="color: ' + colour + '">';
+export function makeRainbow(s) {
+    let node;
+    if (s instanceof LogNode) {
+        node = s;
+    }
+    else {
+        node = new LogNode(s);
+    }
+    node.animationType = AnimationType.RAINBOW;
+    return node;
 }
-export function wrapColourTail() {
-    return '</span>';
-}
-export function makeRainbow(str) {
-    return makeRainbowHead() + str + makeRainbowTail();
-}
-export function makeRainbowHead() {
-    return '<span class="rainbow">';
-}
-export function makeRainbowTail() {
-    return '</span>';
-}
-export const ApplicationState = Object.freeze({
-    CLOSE: 0,
-    OPEN: 1,
-    OPEN_APPLICATION: 2
-});
+export var ApplicationState;
+(function (ApplicationState) {
+    ApplicationState[ApplicationState["CLOSE"] = 0] = "CLOSE";
+    ApplicationState[ApplicationState["OPEN"] = 1] = "OPEN";
+    ApplicationState[ApplicationState["OPEN_APPLICATION"] = 2] = "OPEN_APPLICATION";
+})(ApplicationState || (ApplicationState = {}));
 //Generates a limited number of pastel colours before it starts using old ones.
 export function randomPastelColour() {
     if (pastelColourArr[pastelColourIndex] === undefined) {
@@ -61,12 +76,12 @@ function stripHtml(str) {
 export function wrapRandomPastelColour(str) {
     return wrapColour(str, randomPastelColour());
 }
-export function wrapIndividualCharsWithRandomPastelColours(str) {
-    let output = "";
+export function wrapCharsWithPastelAndRainbow(str) {
+    let output = [];
     for (let i = 0; i < str.length; i++) {
-        output += wrapRandomPastelColour(str.charAt(i));
+        output.push(makeRainbow(wrapRandomPastelColour(str.charAt(i))));
     }
-    return output;
+    return new LogNode(output);
 }
 class ColourTime {
     constructor(time, colour) {
@@ -90,6 +105,7 @@ export class Application {
     redraw() {
     }
     prompt() {
+        return "";
     }
     //Used for detecting key combinations like ctrl+C.
     onKeyDown(keyState, e) {
