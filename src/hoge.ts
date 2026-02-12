@@ -74,14 +74,22 @@ export class hoge extends Application {
 			for (;true;) {
 				let exactMatches = 0;
 				let leftMatches = 0;
-				for (const x in this.twoMap.keys()) {
-					if (this.a === x) {
+				this.twoMap.forEach((_value, key) => {
+					if (this.a === key) {
 						exactMatches++;
 					}
-					else if (this.a === x.substring(0, this.a.length)) {
-						leftMatches++;
+					else if (this.a === key.substring(0, this.a.length)) {
+								leftMatches++;
 					}
-				}
+				});
+				// for (const x in this.twoMap.keys()) {
+				// 	if (this.a === x) {
+				// 		exactMatches++;
+				// 	}
+				// 	else if (this.a === x.substring(0, this.a.length)) {
+				// 		leftMatches++;
+				// 	}
+				// }
 
 				if (exactMatches === 1) {
 					break;
