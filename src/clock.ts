@@ -139,7 +139,7 @@ export class clock extends Application {
 		let month = MONTHS[dateObj.getMonth()];
 		let year = dateObj.getFullYear();
 		clearLog();
-		let arr = ["","","","",""];
+		let arr: (string | LogNode)[][] = [];
 		let isAM = hour < 12;
 		if (hour >= 13) {
 			hour -= 12;
@@ -147,7 +147,7 @@ export class clock extends Application {
 
 		// Do some colours when seconds is 0<= and >=3
 		let inColour = false;
-		if (second >= 0 && second <= 1) {
+		if (second >= 0) {	//second >= 0 && second <= 1	todo
 			inColour = true;
 		}
 
@@ -179,7 +179,7 @@ export class clock extends Application {
 
 	//Append a number. If appending a single digit, append 0 before that.
 	//Otherwise, append each digit one after another.
-	appendNumToArray(arr: string[], num: number, inColour: boolean) {
+	appendNumToArray(arr: (string | LogNode)[][], num: number, inColour: boolean) {
 		if (num < 10) {
 			this.appendToArray(arr, 0, inColour);
 			this.appendToArray(arr, num, inColour);
@@ -191,7 +191,7 @@ export class clock extends Application {
 	}
 
 	//Translate x to its array counterpart using the constants above, then append the arrays to the given one.
-	appendToArray(arr: string[], x: string | number, inColour: boolean) {
+	appendToArray(arr: (string | LogNode)[][], x: string | number, inColour: boolean) {
 		if ((typeof x === "number") && 0 <= x && x <= 9) {
 			this.appendWithBigArray(arr, BIG_NUM[x], BIG_NUM_COLOUR[x], inColour);
 		}
@@ -215,14 +215,17 @@ export class clock extends Application {
 		}
 	}
 
-	appendWithBigArray(arr: string[], arrBigPlain: string[], arrBigColour: (string | LogNode)[][]
-					   , inColour: boolean) {
+	appendWithBigArray(arr: (string | LogNode)[][], arrBigPlain: string[], arrBigColour: (string | LogNode)[][]
+					   ,inColour: boolean) {
 		for (let i = 0; i < arr.length; i++) {
+			let arrNBSP = [NBSP];
 			if (!inColour) {
-				arr[i] += arrBigPlain[i] + NBSP;
+				arr[i] = arr[i].concat(arrBigPlain[i], arrNBSP);
+				// arr[i] += arrBigPlain[i] + NBSP;
 			}
 			else {
-				arr[i] += arrBigColour[i] + NBSP;
+				arr[i] = arr[i].concat(arrBigColour[i], arrNBSP);
+				// arr[i] += arrBigColour[i] + NBSP;
 			}
 
 		}

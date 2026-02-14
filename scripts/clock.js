@@ -134,7 +134,7 @@ export class clock extends Application {
         }
         // Do some colours when seconds is 0<= and >=3
         let inColour = false;
-        if (second >= 0 && second <= 1) {
+        if (second >= 0) { //second >= 0 && second <= 1	todo
             inColour = true;
         }
         this.appendNumToArray(arr, hour, inColour);
