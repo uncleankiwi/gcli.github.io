@@ -43,7 +43,7 @@ export class Dictionary {
 		return fetch("./resources/dictionary.json")
 			.then(response => {
 				if (!response.ok) {
-					console.log(`${response.status}: failed to load dictionary.json`)
+					alert(`${response.status}: failed to load dictionary.json`);
 				}
 				return response.json();
 			});

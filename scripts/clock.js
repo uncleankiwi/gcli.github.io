@@ -134,7 +134,7 @@ export class clock extends Application {
         }
         // Do some colours when seconds is 0<= and >=3
         let inColour = false;
-        if (second % 2 === 0) { //second >= 0 && second <= 1	todo
+        if (second >= 0 && second <= 1) {
             inColour = true;
         }
         this.appendNumToArray(arr, hour, inColour);
@@ -228,7 +228,9 @@ export class clock extends Application {
                     if (k !== 0) {
                         nodeArr.push(makeRainbow(wrapRandomPastelColour(BLOCK_CHAR)));
                     }
-                    nodeArr.push(matchesArr[k]);
+                    if (matchesArr[k] !== "") {
+                        nodeArr.push(matchesArr[k]);
+                    }
                 }
                 colourCopy[i][j] = nodeArr;
             }
