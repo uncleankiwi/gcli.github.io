@@ -1,6 +1,8 @@
 import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
 import {AnimationType, LogNode} from "./bash.js";
+import type {AppOption} from "./util/AppOption";
+import type {AppArgument} from "./util/AppArgument";
 
 export function wrapColour(s: string | number | LogNode, colour: string | undefined) {
 	let node;
@@ -120,6 +122,8 @@ applicationName: optionsString
 	static optionsString: string = Application.applicationName;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
+	static appOptions: AppOption[] = [];
+	static appArguments: AppArgument[] = [];
 	state: number = ApplicationState.OPEN;
 
 	evaluate(command: string) {
