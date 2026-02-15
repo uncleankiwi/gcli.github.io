@@ -119,7 +119,7 @@ applicationName: optionsString
 	  -c		some more text.
 	 */
 	static applicationName: string;
-	static optionsString: string = Application.applicationName;
+	static optionsString: string | undefined;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
 	static appOptions: AppOption[] = [];

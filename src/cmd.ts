@@ -23,7 +23,7 @@ export class cmd extends Application {
 
 	//Only the keys (the application names) will be used for now.
 	//The values could hold application options/a short description in the future?
-	directory: Map<string, string> = new Map([
+	static directory: Map<string, string> = new Map([
 		["gurgle", ''],
 		["mm", ''],
 		["suso", ''],
@@ -45,36 +45,9 @@ export class cmd extends Application {
 		if (this.state === ApplicationState.CLOSE) {
 		return;
 		}
-		if (this.directory.has(commandArgs[0])) {
+		if (cmd.directory.has(commandArgs[0])) {
 			this.nextApplication = commandArgs[0];
 			this.state = ApplicationState.OPEN_APPLICATION;
-		}
-		else if (commandArgs[0] === cmd.HELP) {
-			//Checking for application-specific help.
-			if (commandArgs.length > 1) {
-				if (this.directory.has(commandArgs[1])) {
-					let helpTextArr = eval(commandArgs[1] + ".help");
-					for (let i = 0; i < helpTextArr.length; i++) {
-						printLine(helpTextArr[i]);
-					}
-				}
-				else {
-					printLine("No such application: " + commandArgs[1]);
-				}
-			}
-			//Printing generic help.
-			else {
-				printLine("<span style='text-decoration-line: underline;'>Fake JS bash</span>");
-				printLine(`Type \`${cmd.HELP}\` to see this list.`);
-				printLine(`Available commands in cmd: \`${cmd.RAINBOW}\` and \`${cmd.CLEAR}\`.`)
-				printLine(`Available commands in every application: \`${Application.EXIT}\` and \`${Application.QUIT}\`.`);
-				printLine("Executable scripts (may not be implemented):");
-				printLine("");
-				let keys = this.directory.keys();
-				for (const key of keys) {
-					printLine(key);
-				}
-			}
 		}
 		else if (commandArgs[0] === cmd.RAINBOW) {
 			printLine((wrapCharsWithPastelAndRainbow("Rainbow text rainbow text rainbow text.")));
