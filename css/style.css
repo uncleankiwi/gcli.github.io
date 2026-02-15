@@ -28,10 +28,6 @@ a {
 	text-wrap: wrap;
 }
 
-.rainbow {
-	/*color: #aaff88;*/
-}
-
 @font-face {
 	font-family: 'Liberation Mono';
 	src: url(../resources/LiberationMono-Regular.ttf);

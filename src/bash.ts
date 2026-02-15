@@ -34,6 +34,7 @@ class Log {
 
 	printArray(strArr: (string | LogNode)[]) {
 		this.dirty = true;
+		//Scooting nodes over until there is 1 space for the new line.
 		while (this.nodesArray.length + 1 >= this.MAX_LINES) {
 			this.nodesToAnimate.delete(this.nodesArray.shift()!);
 		}
@@ -64,7 +65,6 @@ class Log {
 	}
 
 	printLine(...str: (string | LogNode)[]) {
-		//Scooting nodes over until there is 1 space for the new line.
 		this.printArray(str);
 	}
 
@@ -254,7 +254,6 @@ export function clearLog() {
 	log.clear();
 }
 
-//Decorates the input line plus prefix (username and all), then appends log with it.
 export function printLine(...str: (string | LogNode)[]) {
 	log.printLine(...str);
 }

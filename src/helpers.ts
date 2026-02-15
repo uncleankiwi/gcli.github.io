@@ -63,6 +63,11 @@ export function rand(x: number, y: number) {
 	return Math.floor(x + Math.random() * (y - x + 1));
 }
 
+//Returns a bunch of spaces for indentation and such
+export function spaces(n: number) {
+	return "&nbsp;".repeat(n);
+}
+
 //Attempts to pad spaces to the left of the string such that the string's centre is about 'length' characters
 //from the left.
 export function padToCentre(str: string) {
@@ -93,8 +98,28 @@ export function wrapCharsWithPastelAndRainbow(str: string) {
 export class Application {
 	static EXIT = "exit";
 	static QUIT = "quit";
+
+	/*
+	When displaying help <applicationName>, it should be formatted as below (note indentation).
+	Options are not hardcoded into the application, instead they are written into options
+	together with the parameter name, and whether it is hidden (should not appear on help, default false).
+	They appear here only if the application has options.
+	===
+user:~$ help applicationName
+applicationName: optionsString
+	shortHelp
+
+	longHelp
+
+	Options:
+	  -a param	some explanation.
+	  -b 		more text.
+	  -c		some more text.
+	 */
 	static applicationName: string;
-	static help = ["No additional info available for this application."];
+	static optionsString: string = Application.applicationName;
+	static shortHelp: string = "No short description available.";
+	static longHelp = ["No additional info available for this application."];
 	state: number = ApplicationState.OPEN;
 
 	evaluate(command: string) {

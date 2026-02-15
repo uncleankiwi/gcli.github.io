@@ -1,4 +1,4 @@
-import {Application, ApplicationState} from "./helpers.js";
+import {Application, ApplicationState, spaces} from "./helpers.js";
 import {clearLog, app} from "./bash.js";
 import {Dictionary} from "./util/Dictionary.js";
 import {GurgleGame} from "./util/GurgleGame.js";
@@ -6,12 +6,15 @@ import {GurgleGame} from "./util/GurgleGame.js";
 export class gurgle extends Application {
 	game: GurgleGame | undefined;
 	loading;
+	static applicationName = "gurgle";
+	static shortHelp = "";
 	// noinspection HttpUrlsUsage
-	static help = ["&nbsp;&nbsp;&nbsp;&nbsp;A clone of that famous word puzzle.",
-	"&nbsp;&nbsp;&nbsp;&nbsp;Credits: SCOWL (<a href='http://wordlist.aspell.net/'>http://wordlist.aspell.net/</a>) ",
-		"&nbsp;&nbsp;&nbsp;&nbsp;for the list of English and Canadian words.",
-		"&nbsp;&nbsp;&nbsp;&nbsp;The lists for commonality 10~~80 were loaded into ",
-		"&nbsp;&nbsp;&nbsp;&nbsp;(but not necessarily used in) this application."];
+	static longHelp = [
+		"A clone of that famous word puzzle.",
+		"Credits: SCOWL (<a href='http://wordlist.aspell.net/'>http://wordlist.aspell.net/</a>) ",
+		"for the list of English and Canadian words.",
+		"The lists for commonality 10~~80 were loaded into ",
+		"(but not necessarily used in) this application."];
 
 	constructor() {
 		super();
