@@ -110,7 +110,6 @@ export class clock extends Application {
     }
     redraw() {
         super.redraw();
-        this.updateColour(new Date());
         let dateObj = new Date();
         let second = dateObj.getSeconds();
         //check if we have to redraw anything. if not, skip.

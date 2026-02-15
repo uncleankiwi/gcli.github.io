@@ -146,7 +146,7 @@ export class LogNode {
 
 	anim() {
 		if (this.animationType === AnimationType.RAINBOW) {
-			this.colour?.increment(10);
+			this.colour?.increment(0.1);
 			if (this.children !== undefined) {
 				for (let i = 0; i < this.children.length; i++) {
 					this.children[i].anim();
@@ -208,7 +208,6 @@ document.addEventListener('keydown', (e) => {
 function refreshScreen() {
 	log.step();
 	drawLog();
-	app.step(new Date());	//Does colour animations
 	app.redraw();	//Refreshes the log
 }
 

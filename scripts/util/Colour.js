@@ -14,8 +14,16 @@ export class Colour {
     }
     //step: how much the hue should be increased by.
     increment(step) {
-        this.h += (step / 100);
+        this.h += step;
         this.h %= 1;
+        this.convertToRGB();
+        this.RGBToString();
+        return this.raw;
+    }
+    //Increase or decrease the saturation by 1/100 of the number
+    changeSaturation(change) {
+        this.s += change;
+        this.s %= 1;
         this.convertToRGB();
         this.RGBToString();
         return this.raw;
@@ -24,7 +32,6 @@ export class Colour {
     stringToRGB() {
         if (this.raw.length === 7 && this.raw.startsWith("#")) {
             //Reading #FFFFFF format
-            let arr = Array.from(this.raw);
             this.r = Number(`0x${this.raw.substring(1, 3)}`);
             this.g = Number(`0x${this.raw.substring(3, 5)}`);
             this.b = Number(`0x${this.raw.substring(5)}`);
@@ -103,10 +110,5 @@ export class Colour {
             this.g = min;
             this.b = otherColour;
         }
-    }
-    static hexToDec(str1, str2) {
-        str1 = str1.toLowerCase();
-        str2 = str2.toLowerCase();
-        str1.sub;
     }
 }

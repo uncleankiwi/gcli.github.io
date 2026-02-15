@@ -85,7 +85,6 @@ export class cmd extends Application {
     }
     redraw() {
         super.redraw();
-        this.updateColour(new Date());
     }
     prompt() {
         return [wrapColour(this.user, '#55cc33'), ':', wrapColour(this.path, '#5566ee'), '$ '];

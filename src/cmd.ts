@@ -99,7 +99,6 @@ export class cmd extends Application {
 
 	redraw() {
 		super.redraw();
-		this.updateColour(new Date());
 	}
 
 	prompt() {
