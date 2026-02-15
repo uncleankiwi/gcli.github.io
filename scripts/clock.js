@@ -1,5 +1,5 @@
 import { Application, ApplicationState, makeRainbow, wrapRandomPastelColour } from "./helpers.js";
-import { clearLog, LogNode, printLine } from "./bash.js";
+import { clearLog, LogNode, printArray, printLine } from "./bash.js";
 const BLOCK_CHAR = "&#x2588;";
 const NBSP = "&nbsp;";
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -127,14 +127,14 @@ export class clock extends Application {
         let month = MONTHS[dateObj.getMonth()];
         let year = dateObj.getFullYear();
         clearLog();
-        let arr = ["", "", "", "", ""];
+        let arr = [[], [], [], [], []];
         let isAM = hour < 12;
         if (hour >= 13) {
             hour -= 12;
         }
         // Do some colours when seconds is 0<= and >=3
         let inColour = false;
-        if (second >= 0) { //second >= 0 && second <= 1	todo
+        if (second % 2 === 0) { //second >= 0 && second <= 1	todo
             inColour = true;
         }
         this.appendNumToArray(arr, hour, inColour);
@@ -150,7 +150,7 @@ export class clock extends Application {
         }
         this.appendToArray(arr, "m", inColour);
         for (let i = 0; i < arr.length; i++) {
-            printLine(arr[i]);
+            printArray(arr[i]);
         }
         printLine(`${day} ${date} ${month} ${year}`);
     }
@@ -195,11 +195,14 @@ export class clock extends Application {
     }
     appendWithBigArray(arr, arrBigPlain, arrBigColour, inColour) {
         for (let i = 0; i < arr.length; i++) {
+            let arrNBSP = [NBSP];
             if (!inColour) {
-                arr[i] += arrBigPlain[i] + NBSP;
+                arr[i] = arr[i].concat([arrBigPlain[i]], arrNBSP);
+                // arr[i] += arrBigPlain[i] + NBSP;
             }
             else {
-                arr[i] += arrBigColour[i] + NBSP;
+                arr[i] = arr[i].concat(arrBigColour[i], arrNBSP);
+                // arr[i] += arrBigColour[i] + NBSP;
             }
         }
     }

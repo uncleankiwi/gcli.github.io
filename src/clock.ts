@@ -3,7 +3,7 @@ import {
 	ApplicationState,
 	makeRainbow, wrapRandomPastelColour
 } from "./helpers.js";
-import {clearLog, LogNode, printLine} from "./bash.js";
+import {clearLog, LogNode, printArray, printLine} from "./bash.js";
 
 const BLOCK_CHAR = "&#x2588;";
 const NBSP = "&nbsp;"
@@ -139,7 +139,7 @@ export class clock extends Application {
 		let month = MONTHS[dateObj.getMonth()];
 		let year = dateObj.getFullYear();
 		clearLog();
-		let arr: (string | LogNode)[][] = [];
+		let arr: (string | LogNode)[][] = [[],[],[],[],[]];
 		let isAM = hour < 12;
 		if (hour >= 13) {
 			hour -= 12;
@@ -166,9 +166,8 @@ export class clock extends Application {
 		}
 		this.appendToArray(arr,"m", inColour);
 
-
 		for (let i = 0; i < arr.length; i++) {
-			printLine(arr[i]);
+			printArray(arr[i]);
 		}
 		printLine(`${day} ${date} ${month} ${year}`);
 	}
@@ -220,7 +219,7 @@ export class clock extends Application {
 		for (let i = 0; i < arr.length; i++) {
 			let arrNBSP = [NBSP];
 			if (!inColour) {
-				arr[i] = arr[i].concat(arrBigPlain[i], arrNBSP);
+				arr[i] = arr[i].concat([arrBigPlain[i]], arrNBSP);
 				// arr[i] += arrBigPlain[i] + NBSP;
 			}
 			else {
