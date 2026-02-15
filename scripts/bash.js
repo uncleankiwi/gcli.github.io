@@ -7,14 +7,156 @@ import { Colour } from "./util/Colour.js";
 import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
 import { KeyState } from "./util/KeyState.js";
+export var AnimationType;
+(function (AnimationType) {
+    AnimationType[AnimationType["RAINBOW"] = 0] = "RAINBOW";
+})(AnimationType || (AnimationType = {}));
+//A collection of lines of text. Each line contains a LogNode, which may contain more LogNodes.
+//Adding a line marks it as dirty, which will cause it to be redrawn on the page next refresh.
+//Nodes that require animation are also placed in a Set, and every animation frame those are
+//fetched, stepped through, and if any were animated the Log is marked dirty.
+class Log {
+    constructor() {
+        this.MAX_LINES = 20;
+        this.dirty = true;
+        this.nodesToAnimate = new Set();
+        this.nodesArray = [];
+        this.currentInput = "";
+    }
+    printArray(strArr) {
+        this.dirty = true;
+        while (this.nodesArray.length + 1 >= this.MAX_LINES) {
+            this.nodesToAnimate.delete(this.nodesArray.shift());
+        }
+        let nodeToAdd;
+        if (strArr.length === 1) {
+            if (typeof (strArr[0]) === "string") {
+                nodeToAdd = new LogNode(strArr[0]);
+            }
+            else {
+                nodeToAdd = strArr[0];
+            }
+        }
+        else {
+            let arrLogNodes = strArr.map(x => {
+                if (typeof (x) === "string") {
+                    return new LogNode(x);
+                }
+                else {
+                    return x;
+                }
+            });
+            nodeToAdd = new LogNode(arrLogNodes);
+        }
+        this.nodesArray.push(nodeToAdd);
+        if (nodeToAdd.toAnimate) {
+            this.nodesToAnimate.add(nodeToAdd);
+        }
+    }
+    printLine(...str) {
+        //Scooting nodes over until there is 1 space for the new line.
+        this.printArray(str);
+    }
+    clear() {
+        if (this.nodesArray.length !== 0) {
+            this.dirty = true;
+        }
+        this.nodesArray.length = 0;
+        this.nodesToAnimate.clear();
+    }
+    //User pressed enter - move app.prompt() and currentInput into log array.
+    enter() {
+        printLine(Log.getAppPrompt(), this.currentInput);
+    }
+    //Prints stuff to the page only if changes have been made i.e. if dirty
+    drawLog() {
+        // if (!this.dirty) {
+        // 	return;
+        // }
+        let output = "";
+        for (let i = 0; i < this.nodesArray.length; i++) {
+            output += "<div>" + this.nodesArray[i].toString() + "</div>";
+        }
+        output += "<div>" + Log.getAppPrompt() + this.currentInput + "</div>";
+        document.getElementById('cmd').innerHTML = output;
+        this.dirty = false;
+    }
+    step() {
+        this.nodesToAnimate.forEach(x => { x.anim(); });
+        //The current app's prompt also has to be animated separately since they're not stored in
+        //the nodesArray or nodesToAnimate.
+        app.prompt().forEach(x => {
+            if (x instanceof LogNode && x.toAnimate) {
+                x.anim();
+            }
+        });
+    }
+    static getAppPrompt() {
+        return app.prompt().join("");
+    }
+}
+export class LogNode {
+    constructor(toDisplay) {
+        this.toAnimate = false;
+        this.log = log;
+        if (typeof (toDisplay) === "undefined") {
+            this.str = "";
+        }
+        else if (typeof (toDisplay) === "string") {
+            this.str = toDisplay;
+        }
+        else {
+            this.children = toDisplay;
+            this.children.forEach(x => {
+                x.parent = this;
+                if (x.toAnimate && !this.toAnimate && this.parent === undefined) {
+                    this.animationType = x.animationType;
+                    this.toAnimate = true;
+                    log.nodesToAnimate.add(this);
+                }
+            });
+        }
+    }
+    anim() {
+        if (this.animationType === AnimationType.RAINBOW) {
+            this.colour?.increment(0.1);
+            if (this.children !== undefined) {
+                for (let i = 0; i < this.children.length; i++) {
+                    this.children[i].anim();
+                }
+            }
+        }
+    }
+    setDirty() {
+        log.dirty = true;
+    }
+    toString() {
+        let output = "";
+        if (this.colour !== undefined) {
+            output += `<span style = color:${this.colour.raw}>`;
+        }
+        if (this.str !== undefined) {
+            output += this.str;
+        }
+        else {
+            for (let i = 0; i < this.children.length; i++) {
+                output += this.children[i].toString();
+            }
+        }
+        if (this.colour !== undefined) {
+            output += "</span>";
+        }
+        if (output.length === 0) {
+            output = "<br />";
+        }
+        return output;
+    }
+}
 /*
 Main script. Handles the log and displaying/highlighting of the log.
 Stores which 'application' is currently running, and fetches the input prefix from them.
  */
-const MAX_LINES = 20; //Does not include the input line.
-let log = [];
-let currentInput = "";
-let rowsFilled = 0;
+let log = new Log();
 // let cursorPos = 0;
 export let app = new cmd();
 let keyState = new KeyState();
@@ -31,8 +173,8 @@ document.addEventListener('keydown', (e) => {
     onKeyDown(e);
 });
 function refreshScreen() {
+    log.step();
     drawLog();
-    app.step(new Date()); //Does colour animations
     app.redraw(); //Refreshes the log
 }
 function onKeyDown(e) {
@@ -46,15 +188,15 @@ function onKeyUp(e) {
         updateKeyState(e.key, false);
     }
     if (e.key.length === 1) {
-        currentInput += e.key;
+        log.currentInput += e.key;
     }
     else if (e.key === 'Backspace') {
-        currentInput = currentInput.substring(0, currentInput.length - 1);
+        log.currentInput = log.currentInput.substring(0, log.currentInput.length - 1);
         e.preventDefault(); //prevent browser back from happening
     }
     else if (e.key === 'Enter') {
-        printLine(decorateInput());
-        app.evaluate(currentInput);
+        log.enter(); //Push app.prompt() and currentInput to the log.
+        app.evaluate(log.currentInput);
         if (app.state === ApplicationState.CLOSE) {
             if (app.constructor.name === cmd.applicationName) {
                 clearLog();
@@ -68,40 +210,25 @@ function onKeyUp(e) {
                 swapApplication(app.nextApplication);
             }
         }
-        currentInput = '';
+        log.currentInput = "";
     }
-}
-function decorateInput() {
-    return app.prompt() + currentInput;
 }
 export function clearLog() {
-    rowsFilled = 0;
+    log.clear();
 }
 //Decorates the input line plus prefix (username and all), then appends log with it.
-export function printLine(str) {
-    if (rowsFilled >= MAX_LINES) {
-        for (let i = 1; i < MAX_LINES; i++) {
-            log[i - 1] = log[i];
-        }
-        rowsFilled = MAX_LINES;
-        log[rowsFilled - 1] = str;
-    }
-    else {
-        log[rowsFilled] = str;
-        rowsFilled++;
-    }
+export function printLine(...str) {
+    log.printLine(...str);
+}
+export function printArray(strArr) {
+    log.printArray(strArr);
 }
 function swapApplication(startedApp) {
     app = eval(`new ${startedApp}();`);
 }
 //Prints out every line of log.
 export function drawLog() {
-    let output = "";
-    for (let i = 0; i < rowsFilled; i++) {
-        output += log[i] + '<br />';
-    }
-    output += decorateInput();
-    document.getElementById('cmd').innerHTML = output;
+    log.drawLog();
 }
 //For updating shift/control/alt status in keyState variable.
 //keyof typeof KeyState

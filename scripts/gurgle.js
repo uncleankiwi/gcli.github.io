@@ -14,7 +14,6 @@ export class gurgle extends Application {
     }
     redraw() {
         super.redraw();
-        this.updateColour(new Date());
     }
     evaluate(command) {
         //super.evaluate(command);
@@ -48,7 +47,7 @@ export class gurgle extends Application {
         else {
             s = "Guess? ('q' to quit) ";
         }
-        return s;
+        return [s];
     }
 }
 // noinspection HttpUrlsUsage

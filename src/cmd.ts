@@ -5,15 +5,14 @@ Contains a directory of applications that can be loaded.
 import {
 	Application,
 	ApplicationState,
-	makeRainbow,
 	wrapColour,
-	wrapIndividualCharsWithRandomPastelColours
+	wrapCharsWithPastelAndRainbow
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";
 import {suso} from "./suso.js";
-import clock from "./clock.js";
+import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
 
 export class cmd extends Application {
@@ -78,7 +77,7 @@ export class cmd extends Application {
 			}
 		}
 		else if (commandArgs[0] === cmd.RAINBOW) {
-			printLine(makeRainbow(wrapIndividualCharsWithRandomPastelColours("Rainbow text rainbow text rainbow text.")));
+			printLine((wrapCharsWithPastelAndRainbow("Rainbow text rainbow text rainbow text.")));
 		}
 		else if (commandArgs[0] === cmd.CLEAR) {
 			clearLog();
@@ -87,7 +86,7 @@ export class cmd extends Application {
 			// noinspection GrazieInspection
 			if (commandArgs[0] === "ls" || commandArgs[0] === "cd") {
 				//To implement "cd .." if this is implemented as well.
-				printLine("No filesystem analogue yet.")
+				printLine("No filesystem analogue yet.");
 			}
 			else if (commandArgs[0].trim() === "") {
 				//do nothing.
@@ -100,10 +99,9 @@ export class cmd extends Application {
 
 	redraw() {
 		super.redraw();
-		this.updateColour(new Date());
 	}
 
 	prompt() {
-		return wrapColour(this.user, '#55cc33')  + ':' + wrapColour(this.path, '#5566ee') + '$ ';
+		return [wrapColour(this.user, '#55cc33'), ':', wrapColour(this.path, '#5566ee'), '$ '];
 	}
 }

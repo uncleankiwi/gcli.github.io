@@ -16,8 +16,17 @@ export class Colour {
 
 	//step: how much the hue should be increased by.
 	increment(step: number) {
-		this.h += (step / 100);
+		this.h += step;
 		this.h %= 1;
+		this.convertToRGB();
+		this.RGBToString();
+		return this.raw;
+	}
+
+	//Increase or decrease the saturation by 1/100 of the number
+	changeSaturation(change: number) {
+		this.s += change;
+		this.s %= 1;
 		this.convertToRGB();
 		this.RGBToString();
 		return this.raw;
@@ -25,7 +34,16 @@ export class Colour {
 
 	//Write the RGB values given the rgb(xx, yy, zz) input string.
 	stringToRGB() {
-		[this.r, this.g, this.b] = (this.raw.match(/\d+/g) as RegExpMatchArray).map(Number);
+		if (this.raw.length === 7 && this.raw.startsWith("#")) {
+			//Reading #FFFFFF format
+			this.r = Number(`0x${this.raw.substring(1, 3)}`);
+			this.g = Number(`0x${this.raw.substring(3, 5)}`);
+			this.b = Number(`0x${this.raw.substring(5)}`);
+		}
+		else {
+			//Reading rgb(255,255,255) format
+			[this.r, this.g, this.b] = (this.raw.match(/\d+/g) as RegExpMatchArray).map(Number);
+		}
 		this.r /= 255;
 		this.g /= 255;
 		this.b /= 255;
@@ -34,9 +52,6 @@ export class Colour {
 	//Write RGB string.
 	RGBToString() {
 		this.raw = `rgb(${Math.floor(this.r * 255)},${Math.floor(this.g * 255)},${Math.floor(this.b * 255)})`;
-	// 	this.raw = "#" + Math.floor(this.r * 255).toString(16) +
-	// 		Math.floor(this.g * 255).toString(16) +
-	// 		Math.floor(this.b * 255).toString(16);
 	}
 
 	//Convert this object's RGB values into HSV.
@@ -103,5 +118,4 @@ export class Colour {
 			this.b = otherColour;
 		}
 	}
-
 }

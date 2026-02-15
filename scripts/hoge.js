@@ -18,7 +18,7 @@ export class hoge extends Application {
         printLine("(unimplemented) evaluate");
     }
     prompt() {
-        return "(unimplemented) prefix";
+        return ["(unimplemented) prefix"];
     }
     onKeyDown(keyState, e) {
         super.onKeyDown(keyState, e);
@@ -64,14 +64,14 @@ export class hoge extends Application {
             for (; true;) {
                 let exactMatches = 0;
                 let leftMatches = 0;
-                for (const x in this.twoMap.keys()) {
-                    if (this.a === x) {
+                this.twoMap.forEach((_value, key) => {
+                    if (this.a === key) {
                         exactMatches++;
                     }
-                    else if (this.a === x.substring(0, this.a.length)) {
+                    else if (this.a === key.substring(0, this.a.length)) {
                         leftMatches++;
                     }
-                }
+                });
                 if (exactMatches === 1) {
                     break;
                 }

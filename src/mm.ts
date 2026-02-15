@@ -3,9 +3,9 @@ import {
 	ApplicationState,
 	makeRainbow,
 	wrapColour,
-	wrapIndividualCharsWithRandomPastelColours
+	wrapCharsWithPastelAndRainbow
 } from "./helpers.js";
-import {clearLog, printLine} from "./bash.js";
+import {clearLog, LogNode, printLine} from "./bash.js";
 
 enum MMState {
 	TITLE,
@@ -154,7 +154,7 @@ export class mm extends Application {
 	inProgressString1 = "Enter ";	//+ this.gameData.places
 	inProgressString2 = " digits from 1 to " // + this.gameData.colours
 	inProgressString3 = " : ";
-	winString = makeRainbow(wrapIndividualCharsWithRandomPastelColours("You win!"));
+	winString = wrapCharsWithPastelAndRainbow("You win!");
 	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 
@@ -247,25 +247,27 @@ export class mm extends Application {
 	prompt() {
 		switch (this.gameState) {
 			case MMState.TITLE:
-				return this.titleString;
+				return [this.titleString];
 			case MMState.CHOOSE_COLOURS:
-				return this.setupStringPossibleColours;
+				return [this.setupStringPossibleColours];
 			case MMState.CHOOSE_CHANCES:
-				return this.setupStringChances;
+				return [this.setupStringChances];
 			case MMState.CHOOSE_PLACES:
-				return this.setupStringPlaces;
+				return [this.setupStringPlaces];
 			case MMState.IN_PROGRESS:
-				return this.inProgressString1 + this.gameData.places + this.inProgressString2
-					+ this.gameData.colours + this.inProgressString3;
+				return [this.inProgressString1 + this.gameData.places + this.inProgressString2
+					+ this.gameData.colours + this.inProgressString3];
 			case MMState.DONE:
-				let output = "";
+				let output: (string | LogNode)[] = [];
 				if (this.gameData.won) {
-					output += this.winString;
+					output.push(this.winString);
 				}
 				else if (this.gameData.lost) {
-					output += this.loseString;
+					output.push(this.loseString);
 				}
-				return output + " " + this.nextGameString;
+				output.push(" ");
+				output.push(this.nextGameString);
+				return output;
 			default:
 				throw "Unknown game state at prompt(): " + this.gameState;
 		}
@@ -273,7 +275,6 @@ export class mm extends Application {
 
 	redraw() {
 		super.redraw();
-		this.updateColour(new Date());
 	}
 
 	//Print out all attempts so far and their grade, plus the attemptsCount at the bottom.

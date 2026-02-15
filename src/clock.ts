@@ -1,9 +1,9 @@
 import {
 	Application,
 	ApplicationState,
-	makeRainbow, randomPastelColour, wrapColourHead, wrapColourTail
+	makeRainbow, wrapRandomPastelColour
 } from "./helpers.js";
-import {clearLog, printLine} from "./bash.js";
+import {clearLog, LogNode, printArray, printLine} from "./bash.js";
 
 const BLOCK_CHAR = "&#x2588;";
 const NBSP = "&nbsp;"
@@ -97,8 +97,8 @@ const BIG_CHAR = [[
 	"m m m",
 	"m m m"
 ]]
-let BIG_NUM_COLOUR: string[][] = [];
-let BIG_CHAR_COLOUR: string[][] = [];
+let BIG_NUM_COLOUR: (string | LogNode)[][][] = [];
+let BIG_CHAR_COLOUR: (string | LogNode)[][][] = [];
 
 let previousSecond: number;
 let initialized = false;
@@ -120,7 +120,6 @@ export class clock extends Application {
 
 	redraw() {
 		super.redraw();
-		this.updateColour(new Date());
 		let dateObj = new Date();
 		let second = dateObj.getSeconds();
 
@@ -139,7 +138,7 @@ export class clock extends Application {
 		let month = MONTHS[dateObj.getMonth()];
 		let year = dateObj.getFullYear();
 		clearLog();
-		let arr = ["","","","",""];
+		let arr: (string | LogNode)[][] = [[],[],[],[],[]];
 		let isAM = hour < 12;
 		if (hour >= 13) {
 			hour -= 12;
@@ -166,20 +165,19 @@ export class clock extends Application {
 		}
 		this.appendToArray(arr,"m", inColour);
 
-
 		for (let i = 0; i < arr.length; i++) {
-			printLine(arr[i]);
+			printArray(arr[i]);
 		}
 		printLine(`${day} ${date} ${month} ${year}`);
 	}
 
 	prompt() {
-		return "";
+		return [""];
 	}
 
 	//Append a number. If appending a single digit, append 0 before that.
 	//Otherwise, append each digit one after another.
-	appendNumToArray(arr: string[], num: number, inColour: boolean) {
+	appendNumToArray(arr: (string | LogNode)[][], num: number, inColour: boolean) {
 		if (num < 10) {
 			this.appendToArray(arr, 0, inColour);
 			this.appendToArray(arr, num, inColour);
@@ -191,7 +189,7 @@ export class clock extends Application {
 	}
 
 	//Translate x to its array counterpart using the constants above, then append the arrays to the given one.
-	appendToArray(arr: string[], x: string | number, inColour: boolean) {
+	appendToArray(arr: (string | LogNode)[][], x: string | number, inColour: boolean) {
 		if ((typeof x === "number") && 0 <= x && x <= 9) {
 			this.appendWithBigArray(arr, BIG_NUM[x], BIG_NUM_COLOUR[x], inColour);
 		}
@@ -215,13 +213,17 @@ export class clock extends Application {
 		}
 	}
 
-	appendWithBigArray(arr: string[], arrBigPlain: string[], arrBigColour: string[], inColour: boolean) {
+	appendWithBigArray(arr: (string | LogNode)[][], arrBigPlain: string[], arrBigColour: (string | LogNode)[][]
+					   ,inColour: boolean) {
 		for (let i = 0; i < arr.length; i++) {
+			let arrNBSP = [NBSP];
 			if (!inColour) {
-				arr[i] += arrBigPlain[i] + NBSP;
+				arr[i] = arr[i].concat([arrBigPlain[i]], arrNBSP);
+				// arr[i] += arrBigPlain[i] + NBSP;
 			}
 			else {
-				arr[i] += arrBigColour[i] + NBSP;
+				arr[i] = arr[i].concat(arrBigColour[i], arrNBSP);
+				// arr[i] += arrBigColour[i] + NBSP;
 			}
 
 		}
@@ -231,7 +233,7 @@ export class clock extends Application {
 	//So we have to replace all spaces with &nbsp; in the constants.
 	//Also, non-space characters are replaced with a box for greater readability.
 	//colourCopy argument is where a copy of the array - but coloured - is output.
-	replaceCharsAndGetColourCopy(arr: string[][], colourCopy: string[][]) {
+	replaceCharsAndGetColourCopy(arr: string[][], colourCopy: (string | LogNode)[][][]) {
 		for (let i = 0; i < arr.length; i++) {
 			let arr2 = arr[i];
 			for (let j = 0; j < arr2.length; j++) {
@@ -243,26 +245,20 @@ export class clock extends Application {
 
 				//Manually copy, because each character needs a different call to wrapRandomPastelColour
 				//Or else the entire row will have the same colour and animation.
-				let str = "";
+				let nodeArr: (string | LogNode)[] = [];
 				let matchesArr = arr2[j].split(BLOCK_CHAR);
 				for (let k = 0; k < matchesArr.length; k++) {
-					//If it's not the first element, close the tag of the decorated block character before it.
+					//If this is not the first element, insert a node containing a block character before it.
 					if (k !== 0) {
-						str += wrapColourTail();
+						nodeArr.push(makeRainbow(wrapRandomPastelColour(BLOCK_CHAR)));
 					}
-
-					str += matchesArr[k];
-
-					//If it's not the last element, put a decorated block character after it.
-					if (k !== matchesArr.length - 1) {
-						str += wrapColourHead(randomPastelColour()) + BLOCK_CHAR;
+					if (matchesArr[k] !== "") {
+						nodeArr.push(matchesArr[k]);
 					}
 				}
 
-				colourCopy[i][j] = makeRainbow(str);
+				colourCopy[i][j] = nodeArr;
 			}
 		}
 	}
 }
-
-export default clock
