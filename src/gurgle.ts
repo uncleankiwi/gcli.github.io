@@ -1,13 +1,13 @@
-import {Application, ApplicationState, spaces} from "./helpers.js";
+import {Application, ApplicationState} from "./helpers.js";
+import {AppOption} from "./util/AppOption.js";
 import {clearLog, app} from "./bash.js";
 import {Dictionary} from "./util/Dictionary.js";
 import {GurgleGame} from "./util/GurgleGame.js";
-import {AppOption} from "./util/AppOption.js";
 
 export class gurgle extends Application {
 	game: GurgleGame | undefined;
 	loading;
-	static applicationName = "gurgle";
+	// static applicationName = "gurgle";
 	static shortHelp = "A clone of that famous word puzzle.";
 	// noinspection HttpUrlsUsage
 	static longHelp = [
@@ -15,11 +15,6 @@ export class gurgle extends Application {
 		"for the list of English and Canadian words.",
 		"The lists for commonality 10~~80 were loaded into ",
 		"(but not necessarily used in) this application."];
-	static appOptions: AppOption[] = [
-		new AppOption("l", "length of word. Random when param unspecified.", "len"),
-		new AppOption("a", "highest commonality of word to use as answer (0-8)", "aLimit"),
-		new AppOption("g", "highest commonality of word usable as guess (0-8)", "gLimit")
-	];
 
 	constructor() {
 		super();
@@ -31,6 +26,17 @@ export class gurgle extends Application {
 			function(e) {
 				alert(e + " :failed to load dictionary for gurgle.")
 		});
+	}
+
+	getAppOptions() {
+		if (gurgle.appOptions === undefined) {
+			gurgle.appOptions = [
+				new AppOption("l", "length of word. Random when param unspecified.", "len"),
+				new AppOption("a", "highest commonality of word to use as answer (0-8)", "aLimit"),
+				new AppOption("g", "highest commonality of word usable as guess (0-8)", "gLimit")
+			];
+		}
+		return gurgle.appOptions;
 	}
 
 	redraw() {

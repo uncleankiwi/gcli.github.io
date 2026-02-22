@@ -2,12 +2,12 @@ import { Application, ApplicationState, wrapCharsWithPastelAndRainbow } from "./
 import { clearLog, LogNode, printLine } from "./bash.js";
 import { AppOption } from "./util/AppOption.js";
 import { cmd } from "./cmd.js";
+import { UserOptions } from "./util/UserOptions.js";
 import { gurgle } from "./gurgle.js";
 import { mm } from "./mm.js";
 import { suso } from "./suso.js";
 import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
-import { UserOptions } from "./util/UserOptions.js";
 /*
 When displaying help <applicationName>, it should be formatted as below (note indentation).
 Options are not hardcoded into the application, instead they are written into options
@@ -26,6 +26,7 @@ Options:
   -c		some more text.
  */
 export class help extends Application {
+    //static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
     constructor(...args) {
         super();
         help.longHelp = help.getLongHelp();
@@ -46,6 +47,14 @@ export class help extends Application {
             help.printAboutBash();
         }
         this.state = ApplicationState.CLOSE;
+    }
+    getAppOptions() {
+        if (Application.appOptions === undefined) {
+            Application.appOptions = [
+                new AppOption(undefined, "App to display help for.", "PARAM")
+            ];
+        }
+        return Application.appOptions;
     }
     evaluate(command) {
         if (command === Application.EXIT || command === Application.QUIT) {
@@ -84,8 +93,6 @@ export class help extends Application {
         }
     }
 }
-help.applicationName = "help";
-help.optionsString = Application.applicationName;
+// static applicationName = "help";
+// static optionsString: string = this.constructor.name;
 help.shortHelp = "Displays info about bash commands and applications.";
-//static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
-help.appOptions = [];

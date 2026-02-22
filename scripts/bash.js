@@ -2,12 +2,12 @@ import { Application, ApplicationState } from "./helpers.js";
 import { Colour } from "./util/Colour.js";
 import { KeyState } from "./util/KeyState.js";
 import { cmd } from "./cmd.js";
-import { gurgle } from "./gurgle.js";
+import { help } from "./help.js";
 import { mm } from "./mm.js";
 import { suso } from "./suso.js";
 import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
-import { help } from "./help.js";
+import { gurgle } from "./gurgle.js";
 export var AnimationType;
 (function (AnimationType) {
     AnimationType[AnimationType["RAINBOW"] = 0] = "RAINBOW";

@@ -2,7 +2,6 @@ import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
 import {AnimationType, LogNode} from "./bash.js";
 import {AppOption} from "./util/AppOption.js";
-import {AppArgument} from "./util/AppArgument.js";
 import {UserOptions} from "./util/UserOptions.js";
 
 export function wrapColour(s: string | number | LogNode, colour: string | undefined) {
@@ -102,13 +101,10 @@ export class Application {
 	static EXIT = "exit";
 	static QUIT = "quit";
 
-	static applicationName: string;
+	applicationName: string = this.constructor.name;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
-	static appOptions: AppOption[] = [
-		new AppOption(undefined, "App to display help for.", "PARAM")
-	];
-	static appArguments: AppArgument[] = [];
+	protected static appOptions: AppOption[];
 	state: number = ApplicationState.OPEN;
 
 	//Options that are preceded by "-" are an argument.
@@ -117,6 +113,13 @@ export class Application {
 	//Words that don't belong to an argument are parameters.
 	userArgs: UserOptions | undefined;	//Map<string,string | undefined> = new Map;
 	userParams: string[] = [];
+
+	getAppOptions() {
+		if (Application.appOptions === undefined) {
+			Application.appOptions = [];
+		}
+		return Application.appOptions;
+	}
 
 	evaluate(command: string) {
 		if (command === Application.EXIT || command === Application.QUIT) {

@@ -1,14 +1,14 @@
 //Stores the VALID options and their respective parameters that the user has entered.
 //Invalid options (i.e. those that aren't in the appOptions in the current application aren't stored.)
 //Stores one AppOption and the corresponding user state
-import { AppOption } from "./AppOption.js";
 import { Application } from "../helpers.js";
-import { help } from "../help.js";
-import { gurgle } from "../gurgle.js";
-import { mm } from "../mm.js";
-import { suso } from "../suso.js";
-import { clock } from "../clock.js";
-import { hoge } from "../hoge.js";
+import { AppOption } from "./AppOption.js";
+// import {help} from "../help.js";
+// import {gurgle} from "../gurgle.js";
+// import {mm} from "../mm.js";
+// import {suso} from "../suso.js";
+// import {clock} from "../clock.js";
+// import {hoge} from "../hoge.js";
 class UserOption {
     constructor(ao) {
         this.appOption = ao;
@@ -20,14 +20,21 @@ export class UserOptions {
         //Loading optionsMap
         this.application = application;
         this.optionsMap = new Map();
-        let appOptions = eval(application.constructor.name + ".appOptions");
+        console.log("../" + application.applicationName + ".js <-- import");
+        import("../" + application.applicationName + ".js").then(this.someMethod);
+        // import("../help.js").then(this.someMethod);
+        // import {hoge} from "../hoge.js";
+        //Loading user options and params
+        this.parseUserInput(...args);
+    }
+    someMethod() {
+        let appName = this.application.applicationName;
+        let appOptions = eval(appName + ".appOptions");
         appOptions.forEach(x => {
             if (x.option !== undefined) {
                 this.optionsMap.set(x.option, new UserOption(x));
             }
         });
-        //Loading user options and params
-        this.parseUserInput(...args);
     }
     parseUserInput(...args) {
         let openParam; //An option that does not yet have a parameter assigned to it

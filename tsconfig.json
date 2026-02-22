@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2021",
+    "module":"es2022",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
