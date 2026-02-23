@@ -158,8 +158,8 @@ export class mm extends Application {
 	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 
-	constructor() {
-		super();
+	constructor(...args: string[]) {
+		super(...args);
 	}
 
 	evaluate(command: string) {

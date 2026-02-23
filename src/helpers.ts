@@ -114,6 +114,10 @@ export class Application {
 	userArgs: UserOptions | undefined;	//Map<string,string | undefined> = new Map;
 	userParams: string[] = [];
 
+	constructor(...args: string[]) {
+		this.userArgs = new UserOptions(this, ...args);
+	}
+
 	getAppOptions() {
 		if (Application.appOptions === undefined) {
 			Application.appOptions = [];

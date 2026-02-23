@@ -16,8 +16,8 @@ export class gurgle extends Application {
 		"The lists for commonality 10~~80 were loaded into ",
 		"(but not necessarily used in) this application."];
 
-	constructor() {
-		super();
+	constructor(...args: string[]) {
+		super(...args);
 		this.loading = true;
 		Dictionary.init().then(
 			function() {

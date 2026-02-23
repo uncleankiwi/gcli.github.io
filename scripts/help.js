@@ -82,7 +82,7 @@ export class help extends Application {
         printLine("");
         let keys = cmd.directory.keys();
         for (const key of keys) {
-            let s = AppOption.getOptionsString(eval(key + ".appOptions"));
+            let s = AppOption.getOptionsString(eval(key + ".prototype.getAppOptions()"));
             if (s === undefined) {
                 s = key;
             }
