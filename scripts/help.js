@@ -25,7 +25,7 @@ Options:
   -b 		more text.
   -c		some more text.
  */
-class help extends Application {
+export class help extends Application {
     //static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
     constructor(...args) {
         super();
@@ -96,4 +96,3 @@ class help extends Application {
 // static applicationName = "help";
 // static optionsString: string = this.constructor.name;
 help.shortHelp = "Displays info about bash commands and applications.";
-export default help;

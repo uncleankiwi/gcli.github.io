@@ -33,11 +33,23 @@ export class UserOptions {
 		this.optionsMap = new Map<string, UserOption>();
 		// console.log("../" + application.applicationName + ".js <-- import");
 
-		const importer = (async () => {
-			return await import("../" + application.applicationName + ".js");
-		})().then(module => {
-			const moduleDefault = new module.default();	//Attempt to load the default exports in the module
-			moduleDefault.run();
+		// const importer = (async () => {
+		// 	return await import("../" + application.applicationName + ".js");
+		// })().then(module => {
+		// 	const moduleDefault = new module.default();	//Attempt to load the default exports in the module
+		// 	moduleDefault.run();
+		//
+		// });
+
+		let module;
+
+		(async() => {
+			// const {eval(application.applicationName)} = await import("../" + application.applicationName + ".js");
+			// eval(`const{${application.applicationName}} = import("../" + application.applicationName + ".js")`);
+			// await new Promise(x => {setTimeout(x, 1000)});
+			module = await import("../help.js");
+			console.log(module.help.getLongHelp() + " hello?");
+		})().then(_ => {
 			let appName = application.applicationName;
 			console.log("../" + application.applicationName + ".js <-- import inside");
 			let appOptions: AppOption[] = eval(appName + ".appOptions");
@@ -47,6 +59,16 @@ export class UserOptions {
 				}
 			});
 		});
+
+
+		// let appName = application.applicationName;
+		// console.log("../" + application.applicationName + ".js <-- import inside");
+		// let appOptions: AppOption[] = eval(appName + ".appOptions");
+		// appOptions.forEach(x => {
+		// 	if (x.option !== undefined) {
+		// 		this.optionsMap.set(x.option, new UserOption(x));
+		// 	}
+		// });
 
 		// import("../" + application.applicationName + ".js").then(() => {
 		//
