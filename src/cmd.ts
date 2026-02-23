@@ -14,7 +14,7 @@ import {mm} from "./mm.js";
 import {suso} from "./suso.js";
 import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
-import {help} from "./help.js";
+import "./help.js";
 
 export class cmd extends Application {
 	static applicationName = "cmd";

@@ -9,7 +9,7 @@ export class AppOption {
     //Gets a short one-liner version of the options.
     // [-bc] [-a param] PARAM
     static getOptionsString(options) {
-        if (options.length === 0) {
+        if (options === undefined || options.length === 0) {
             return undefined;
         }
         let noParamOptions = "";
@@ -44,7 +44,7 @@ export class AppOption {
     Between option and description should be space + longestParam worth of spaces + tab
      */
     static listOptions(options) {
-        if (options.length === 0) {
+        if (options === undefined || options.length === 0) {
             return undefined;
         }
         //Finding longest param to see how many spaces should be padded in between option and description.

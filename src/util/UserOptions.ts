@@ -31,8 +31,26 @@ export class UserOptions {
 		//Loading optionsMap
 		this.application = application;
 		this.optionsMap = new Map<string, UserOption>();
-		console.log("../" + application.applicationName + ".js <-- import");
-		import("../" + application.applicationName + ".js").then(this.someMethod);
+		// console.log("../" + application.applicationName + ".js <-- import");
+
+		const importer = (async () => {
+			return await import("../" + application.applicationName + ".js");
+		})().then(module => {
+			const moduleDefault = new module.default();	//Attempt to load the default exports in the module
+			moduleDefault.run();
+			let appName = application.applicationName;
+			console.log("../" + application.applicationName + ".js <-- import inside");
+			let appOptions: AppOption[] = eval(appName + ".appOptions");
+			appOptions.forEach(x => {
+				if (x.option !== undefined) {
+					this.optionsMap.set(x.option, new UserOption(x));
+				}
+			});
+		});
+
+		// import("../" + application.applicationName + ".js").then(() => {
+		//
+		// });
 
 		// import("../help.js").then(this.someMethod);
 		// import {hoge} from "../hoge.js";
@@ -43,8 +61,8 @@ export class UserOptions {
 		this.parseUserInput(...args);
 	}
 
-	private someMethod() {
-		let appName = this.application.applicationName;
+	private someMethod(app: Application) {
+		let appName = app.applicationName;
 		let appOptions: AppOption[] = eval(appName + ".appOptions");
 		appOptions.forEach(x => {
 			if (x.option !== undefined) {

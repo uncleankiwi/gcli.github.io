@@ -26,7 +26,7 @@ Options:
   -b 		more text.
   -c		some more text.
  */
-export class help extends Application {
+export default class help extends Application {
 	// static applicationName = "help";
 	// static optionsString: string = this.constructor.name;
 	static shortHelp: string = "Displays info about bash commands and applications.";
