@@ -28,9 +28,7 @@ export class UserOptions {
 	optionsMap: Map<string, UserOption>;
 	application: Application;
 
-	constructor(application: Application, ...args: string[]) {
-		console.log(...args);
-
+	constructor(application: Application, args: string[]) {
 		//Loading optionsMap
 		this.application = application;
 		this.optionsMap = new Map<string, UserOption>();
@@ -41,13 +39,21 @@ export class UserOptions {
 		});
 
 		//Loading user options and params
-		this.parseUserInput(...args);
+		this.parseUserInput(args);
 	}
 
-	parseUserInput(...args: string[]) {
+	parseUserInput(args: string[]) {
+		console.log(args[0] + " hoo " + args[1]);
+		try {
+			console.log("barsing above... args length:" + args[0].length + " ")
+		}
+		catch (e) {
+			console.log(e);
+		}
 		let openParam: string | undefined;	//An option that does not yet have a parameter assigned to it
 		for (let i = 1; i < args.length; i++) {
 			let word = args[i];
+			console.log(word + " in barse, index:" + i);
 			if (word.startsWith("-") && word.length > 1) {
 				//This word is an option
 				openParam = word.substring(1);

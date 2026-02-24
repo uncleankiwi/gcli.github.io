@@ -208,7 +208,7 @@ function onKeyUp(e) {
         else if (app.state === ApplicationState.OPEN_APPLICATION) {
             //Only allow cmd to swap applications.
             if (app.constructor.name === cmd.applicationName) {
-                swapApplication(app.nextApplication);
+                swapApplication(app.commandArgs);
             }
         }
         log.currentInput = "";
@@ -223,8 +223,8 @@ export function printLine(...str) {
 export function printArray(strArr) {
     log.printArray(strArr);
 }
-function swapApplication(startedApp) {
-    app = eval(`new ${startedApp[0]}(startedApp);`);
+function swapApplication(commandArgs) {
+    app = eval(`new ${commandArgs[0]}(commandArgs);`);
 }
 //Prints out every line of log.
 export function drawLog() {

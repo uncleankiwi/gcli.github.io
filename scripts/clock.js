@@ -96,8 +96,8 @@ let BIG_CHAR_COLOUR = [];
 let previousSecond;
 let initialized = false;
 export class clock extends Application {
-    constructor() {
-        super();
+    constructor(...args) {
+        super(args);
         if (!initialized) {
             initialized = true;
             this.replaceCharsAndGetColourCopy(BIG_NUM, BIG_NUM_COLOUR);

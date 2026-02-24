@@ -244,7 +244,7 @@ function onKeyUp(e: KeyboardEvent) {
 		else if (app.state === ApplicationState.OPEN_APPLICATION) {
 			//Only allow cmd to swap applications.
 			if (app.constructor.name === cmd.applicationName) {
-				swapApplication((app as cmd).nextApplication);
+				swapApplication((app as cmd).commandArgs);
 			}
 		}
 		log.currentInput = "";
@@ -263,8 +263,8 @@ export function printArray(strArr: (string | LogNode)[]) {
 	log.printArray(strArr);
 }
 
-function swapApplication(startedApp: string[]) {
-	app = eval(`new ${startedApp[0]}(startedApp);`);
+function swapApplication(commandArgs: string[]) {
+	app = eval(`new ${commandArgs[0]}(commandArgs);`);
 }
 
 //Prints out every line of log.

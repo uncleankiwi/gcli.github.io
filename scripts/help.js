@@ -28,9 +28,8 @@ Options:
 export class help extends Application {
     //static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
     constructor(...args) {
-        super();
+        super(args);
         help.longHelp = help.getLongHelp();
-        this.userArgs = new UserOptions(this, ...args);
         if (this.userParams.length > 0) {
             let appToFetch = this.userParams[0];
             if (cmd.directory.has(appToFetch)) {

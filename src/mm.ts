@@ -159,7 +159,7 @@ export class mm extends Application {
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 
 	constructor(...args: string[]) {
-		super(...args);
+		super(args);
 	}
 
 	evaluate(command: string) {

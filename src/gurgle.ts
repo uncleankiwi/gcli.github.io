@@ -17,7 +17,7 @@ export class gurgle extends Application {
 		"(but not necessarily used in) this application."];
 
 	constructor(...args: string[]) {
-		super(...args);
+		super(args);
 		this.loading = true;
 		Dictionary.init().then(
 			function() {

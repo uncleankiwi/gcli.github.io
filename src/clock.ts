@@ -104,8 +104,8 @@ let previousSecond: number;
 let initialized = false;
 
 export class clock extends Application {
-	constructor() {
-		super();
+	constructor(...args: string[]) {
+		super(args);
 		if (!initialized) {
 			initialized = true;
 			this.replaceCharsAndGetColourCopy(BIG_NUM, BIG_NUM_COLOUR);

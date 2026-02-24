@@ -123,8 +123,8 @@ class GameData {
     }
 }
 export class mm extends Application {
-    constructor() {
-        super();
+    constructor(...args) {
+        super(args);
         this.gameState = MMState.TITLE;
         this.gameData = new GameData();
         this.titleString = "Press Enter to begin, or 'q' to quit.";

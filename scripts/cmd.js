@@ -11,11 +11,11 @@ import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
 import "./help.js";
 export class cmd extends Application {
-    constructor() {
-        super();
+    constructor(...args) {
+        super(args);
         this.user = 'user@uncleankiwi.github.io';
         this.path = '~';
-        this.nextApplication = [];
+        this.commandArgs = [];
     }
     //Run the function stored in the map if the key matches.
     evaluate(command) {
@@ -25,7 +25,7 @@ export class cmd extends Application {
             return;
         }
         if (cmd.directory.has(commandArgs[0])) {
-            this.nextApplication = commandArgs;
+            this.commandArgs = commandArgs;
             this.state = ApplicationState.OPEN_APPLICATION;
         }
         else if (commandArgs[0] === cmd.RAINBOW) {

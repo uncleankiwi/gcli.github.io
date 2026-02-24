@@ -87,10 +87,11 @@ export function wrapCharsWithPastelAndRainbow(str) {
     return new LogNode(output);
 }
 export class Application {
-    constructor() {
+    constructor(args) {
         this.applicationName = this.constructor.name;
         this.state = ApplicationState.OPEN;
         this.userParams = [];
+        this.userArgs = new UserOptions(this, args);
     }
     getAppOptions() {
         if (Application.appOptions === undefined) {

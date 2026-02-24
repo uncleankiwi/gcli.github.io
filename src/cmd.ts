@@ -34,10 +34,10 @@ export class cmd extends Application {
 	]);
 	user= 'user@uncleankiwi.github.io';
 	path = '~';
-	nextApplication: string[] = [];
+	commandArgs: string[] = [];
 
-	constructor() {
-		super();
+	constructor(...args: string[]) {
+		super(args);
 	}
 
 	//Run the function stored in the map if the key matches.
@@ -48,7 +48,7 @@ export class cmd extends Application {
 		return;
 		}
 		if (cmd.directory.has(commandArgs[0])) {
-			this.nextApplication = commandArgs;
+			this.commandArgs = commandArgs;
 			this.state = ApplicationState.OPEN_APPLICATION;
 		}
 		else if (commandArgs[0] === cmd.RAINBOW) {

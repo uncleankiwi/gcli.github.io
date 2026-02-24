@@ -4,8 +4,8 @@ import { clearLog, app } from "./bash.js";
 import { Dictionary } from "./util/Dictionary.js";
 import { GurgleGame } from "./util/GurgleGame.js";
 export class gurgle extends Application {
-    constructor() {
-        super();
+    constructor(...args) {
+        super(args);
         this.loading = true;
         Dictionary.init().then(function () {
             app.loading = false;
