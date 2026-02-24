@@ -94,10 +94,7 @@ export class Application {
         this.userArgs = new UserOptions(this, args);
     }
     getAppOptions() {
-        if (Application.appOptions === undefined) {
-            Application.appOptions = [];
-        }
-        return Application.appOptions;
+        return [];
     }
     evaluate(command) {
         if (command === Application.EXIT || command === Application.QUIT) {

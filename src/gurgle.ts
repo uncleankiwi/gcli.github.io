@@ -29,14 +29,11 @@ export class gurgle extends Application {
 	}
 
 	getAppOptions() {
-		if (gurgle.appOptions === undefined) {
-			gurgle.appOptions = [
-				new AppOption("l", "length of word. Random when param unspecified.", "len"),
-				new AppOption("a", "highest commonality of word to use as answer (0-8)", "aLimit"),
-				new AppOption("g", "highest commonality of word usable as guess (0-8)", "gLimit")
-			];
-		}
-		return gurgle.appOptions;
+		return [
+			new AppOption("l", "length of word. Random when param unspecified.", "len"),
+			new AppOption("a", "highest commonality of word to use as answer (0-8)", "aLimit"),
+			new AppOption("g", "highest commonality of word usable as guess (0-8)", "gLimit")
+		];
 	}
 
 	redraw() {

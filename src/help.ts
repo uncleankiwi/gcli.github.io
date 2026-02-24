@@ -58,12 +58,9 @@ export class help extends Application {
 	}
 
 	getAppOptions() {
-		if (Application.appOptions === undefined) {
-			Application.appOptions = [
-				new AppOption(undefined, "App to display help for.", "PARAM")
-			];
-		}
-		return Application.appOptions;
+		return [
+			new AppOption(undefined, "App to display help for.", "PARAM")
+		];
 	}
 
 	evaluate(command: string) {

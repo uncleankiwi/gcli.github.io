@@ -48,12 +48,9 @@ export class help extends Application {
         this.state = ApplicationState.CLOSE;
     }
     getAppOptions() {
-        if (Application.appOptions === undefined) {
-            Application.appOptions = [
-                new AppOption(undefined, "App to display help for.", "PARAM")
-            ];
-        }
-        return Application.appOptions;
+        return [
+            new AppOption(undefined, "App to display help for.", "PARAM")
+        ];
     }
     evaluate(command) {
         if (command === Application.EXIT || command === Application.QUIT) {
@@ -73,6 +70,7 @@ export class help extends Application {
         return output;
     }
     static printAboutBash() {
+        console.log(gurgle.prototype.getAppOptions());
         printLine("<span style='text-decoration-line: underline;'>Fake JS bash</span>");
         printLine(`Type \`${cmd.HELP}\` to see this list.`);
         printLine(`Available commands in cmd: \`${cmd.RAINBOW}\` and \`${cmd.CLEAR}\`.`);

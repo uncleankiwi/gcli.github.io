@@ -104,7 +104,6 @@ export class Application {
 	applicationName: string = this.constructor.name;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
-	protected static appOptions: AppOption[];
 	state: number = ApplicationState.OPEN;
 
 	//Options that are preceded by "-" are an argument.
@@ -118,11 +117,8 @@ export class Application {
 		this.userArgs = new UserOptions(this, args);
 	}
 
-	getAppOptions() {
-		if (Application.appOptions === undefined) {
-			Application.appOptions = [];
-		}
-		return Application.appOptions;
+	getAppOptions(): AppOption[] {
+		return [];
 	}
 
 	evaluate(command: string) {
