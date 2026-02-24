@@ -104,7 +104,7 @@ let previousSecond: number;
 let initialized = false;
 
 export class clock extends Application {
-	constructor(...args: string[]) {
+	constructor(args: string[]) {
 		super(args);
 		if (!initialized) {
 			initialized = true;

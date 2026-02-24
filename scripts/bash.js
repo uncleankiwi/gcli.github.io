@@ -159,7 +159,7 @@ Stores which 'application' is currently running, and fetches the input prefix fr
  */
 let log = new Log();
 // let cursorPos = 0;
-export let app = new cmd();
+export let app = new cmd([]);
 let keyState = new KeyState();
 setInterval(refreshScreen, 100);
 document.addEventListener('DOMContentLoaded', () => {
@@ -203,7 +203,7 @@ function onKeyUp(e) {
                 clearLog();
                 printLine("Cmd restarted.");
             }
-            app = new cmd();
+            app = new cmd([]);
         }
         else if (app.state === ApplicationState.OPEN_APPLICATION) {
             //Only allow cmd to swap applications.

@@ -96,7 +96,7 @@ let BIG_CHAR_COLOUR = [];
 let previousSecond;
 let initialized = false;
 export class clock extends Application {
-    constructor(...args) {
+    constructor(args) {
         super(args);
         if (!initialized) {
             initialized = true;

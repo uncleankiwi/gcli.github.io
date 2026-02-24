@@ -36,7 +36,7 @@ export class cmd extends Application {
 	path = '~';
 	commandArgs: string[] = [];
 
-	constructor(...args: string[]) {
+	constructor(args: string[]) {
 		super(args);
 	}
 

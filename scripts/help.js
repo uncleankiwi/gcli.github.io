@@ -27,7 +27,7 @@ Options:
  */
 export class help extends Application {
     //static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
-    constructor(...args) {
+    constructor(args) {
         super(args);
         help.longHelp = help.getLongHelp();
         if (this.userParams.length > 0) {

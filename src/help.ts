@@ -32,7 +32,7 @@ export class help extends Application {
 	static shortHelp: string = "Displays info about bash commands and applications.";
 	//static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
 
-	constructor(...args: string[]) {
+	constructor(args: string[]) {
 		super(args);
 
 		help.longHelp = help.getLongHelp();

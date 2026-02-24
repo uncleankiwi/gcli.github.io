@@ -11,7 +11,7 @@ import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
 import "./help.js";
 export class cmd extends Application {
-    constructor(...args) {
+    constructor(args) {
         super(args);
         this.user = 'user@uncleankiwi.github.io';
         this.path = '~';

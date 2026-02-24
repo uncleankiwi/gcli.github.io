@@ -123,7 +123,7 @@ class GameData {
     }
 }
 export class mm extends Application {
-    constructor(...args) {
+    constructor(args) {
         super(args);
         this.gameState = MMState.TITLE;
         this.gameData = new GameData();
