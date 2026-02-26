@@ -117,7 +117,7 @@ export class help extends Application {
 		let output: string[] = [];
 		output[0] = "Displays info about bash commands and applications.";
 		output[1] = `${cmd.HELP} without parameters gives info about bash.`;
-		output[2] = `\`${cmd.HELP} PARAM\` gives info about the command or application PARAM.`;
+		output[2] = `\`${cmd.HELP} PARAM\` gives info about the application PARAM.`;
 		return output;
 	}
 
