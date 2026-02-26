@@ -1,15 +1,7 @@
-
 import {Application, ApplicationState} from "./helpers.js";
 import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
-
 import {cmd} from "./cmd.js";
-import {help} from "./help.js";
-import {mm} from "./mm.js";
-import {suso} from "./suso.js";
-import {clock} from "./clock.js";
-import {hoge} from "./hoge.js";
-import {gurgle} from "./gurgle.js";
 
 export enum AnimationType {
 	RAINBOW
@@ -21,20 +13,17 @@ export enum AnimationType {
 //fetched, stepped through, and if any were animated the Log is marked dirty.
 class Log {
 	MAX_LINES = 20;
-	dirty: boolean;
 	nodesToAnimate: Set<LogNode>;
 	nodesArray: LogNode[];
 	currentInput: string;
 
 	constructor() {
-		this.dirty = true;
 		this.nodesToAnimate = new Set<LogNode>();
 		this.nodesArray = [];
 		this.currentInput = "";
 	}
 
 	printArray(strArr: (string | LogNode)[]) {
-		this.dirty = true;
 		//Scooting nodes over until there is 1 space for the new line.
 		while (this.nodesArray.length + 1 >= this.MAX_LINES) {
 			this.nodesToAnimate.delete(this.nodesArray.shift()!);
@@ -70,9 +59,6 @@ class Log {
 	}
 
 	clear() {
-		if (this.nodesArray.length !== 0) {
-			this.dirty = true;
-		}
 		this.nodesArray.length = 0;
 		this.nodesToAnimate.clear();
 	}
@@ -94,8 +80,6 @@ class Log {
 		}
 		output += "<div>" + Log.getAppPrompt() + this.currentInput + "</div>";
 		(document.getElementById('cmd') as HTMLElement).innerHTML = output;
-
-		this.dirty = false;
 	}
 
 	step() {
@@ -154,10 +138,6 @@ export class LogNode {
 				}
 			}
 		}
-	}
-
-	setDirty() {
-		log.dirty = true;
 	}
 
 	toString() {
@@ -264,7 +244,22 @@ export function printArray(strArr: (string | LogNode)[]) {
 }
 
 function swapApplication(commandArgs: string[]) {
-	app = eval(`new ${commandArgs[0]}(commandArgs);`);
+	try {
+		getClassFromModule(commandArgs).then(_ => {});
+	}
+	catch (e) {
+		alert(e);
+	}
+}
+
+async function getClassFromModule(commandArgs: string[]) {
+	let module = await import("./" + commandArgs[0] + ".js");
+	app = new module[commandArgs[0]](commandArgs);
+
+	// Check if it immediately closes
+	if (app.state === ApplicationState.CLOSE) {
+		app = new cmd([]);
+	}
 }
 
 //Prints out every line of log.

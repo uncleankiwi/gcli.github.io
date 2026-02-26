@@ -104,7 +104,7 @@ export class Application {
 	applicationName: string = this.constructor.name;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
-	state: number = ApplicationState.OPEN;
+	state: ApplicationState = ApplicationState.OPEN;
 
 	//Options that are preceded by "-" are an argument.
 	//If the next word does not have "-", it's the parameter of that argument.

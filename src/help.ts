@@ -53,7 +53,11 @@ export class help extends Application {
 				let optionsString = [`${appToFetch}:${help.appendAppToOptionsString(appToFetch)}`];
 				let shortHelp = [spaces(2) + eval(appToFetch + ".shortHelp")];
 				let longHelp: string[] = eval(appToFetch + ".longHelp");
-				help.indentArray(longHelp, 2);
+				//Can't indent longHelp directly - have to make a copy.
+				let longHelpCopy: string[] = [];
+				for (let i = 0; i < longHelp.length; i++) {
+					longHelpCopy.push(spaces(2) + longHelp[i]);
+				}
 
 				//Options section
 				let optionsArrayOrUndefined = AppOption.listOptions(
@@ -78,7 +82,7 @@ export class help extends Application {
 				}
 
 				//Putting it together
-				let helpTextArr = optionsString.concat(shortHelp, [""], longHelp, optionsArray, argArray);
+				let helpTextArr = optionsString.concat(shortHelp, [""], longHelpCopy, optionsArray, argArray);
 				for (let i = 0; i < helpTextArr.length; i++) {
 					printLine(helpTextArr[i]);
 				}

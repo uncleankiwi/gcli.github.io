@@ -2,12 +2,6 @@ import { Application, ApplicationState } from "./helpers.js";
 import { Colour } from "./util/Colour.js";
 import { KeyState } from "./util/KeyState.js";
 import { cmd } from "./cmd.js";
-import { help } from "./help.js";
-import { mm } from "./mm.js";
-import { suso } from "./suso.js";
-import { clock } from "./clock.js";
-import { hoge } from "./hoge.js";
-import { gurgle } from "./gurgle.js";
 export var AnimationType;
 (function (AnimationType) {
     AnimationType[AnimationType["RAINBOW"] = 0] = "RAINBOW";
@@ -19,13 +13,11 @@ export var AnimationType;
 class Log {
     constructor() {
         this.MAX_LINES = 20;
-        this.dirty = true;
         this.nodesToAnimate = new Set();
         this.nodesArray = [];
         this.currentInput = "";
     }
     printArray(strArr) {
-        this.dirty = true;
         //Scooting nodes over until there is 1 space for the new line.
         while (this.nodesArray.length + 1 >= this.MAX_LINES) {
             this.nodesToAnimate.delete(this.nodesArray.shift());
@@ -59,9 +51,6 @@ class Log {
         this.printArray(str);
     }
     clear() {
-        if (this.nodesArray.length !== 0) {
-            this.dirty = true;
-        }
         this.nodesArray.length = 0;
         this.nodesToAnimate.clear();
     }
@@ -80,7 +69,6 @@ class Log {
         }
         output += "<div>" + Log.getAppPrompt() + this.currentInput + "</div>";
         document.getElementById('cmd').innerHTML = output;
-        this.dirty = false;
     }
     step() {
         this.nodesToAnimate.forEach(x => { x.anim(); });
@@ -127,9 +115,6 @@ export class LogNode {
                 }
             }
         }
-    }
-    setDirty() {
-        log.dirty = true;
     }
     toString() {
         let output = "";
@@ -224,7 +209,20 @@ export function printArray(strArr) {
     log.printArray(strArr);
 }
 function swapApplication(commandArgs) {
-    app = eval(`new ${commandArgs[0]}(commandArgs);`);
+    try {
+        getClassFromModule(commandArgs).then(_ => { });
+    }
+    catch (e) {
+        alert(e);
+    }
+}
+async function getClassFromModule(commandArgs) {
+    let module = await import("./" + commandArgs[0] + ".js");
+    app = new module[commandArgs[0]](commandArgs);
+    // Check if it immediately closes
+    if (app.state === ApplicationState.CLOSE) {
+        app = new cmd([]);
+    }
 }
 //Prints out every line of log.
 export function drawLog() {
