@@ -217,12 +217,16 @@ function swapApplication(commandArgs) {
     }
 }
 async function getClassFromModule(commandArgs) {
-    let module = await import("./" + commandArgs[0] + ".js");
-    app = new module[commandArgs[0]](commandArgs);
+    let cls = await importClass(commandArgs[0]);
+    app = new cls(commandArgs);
     // Check if it immediately closes
     if (app.state === ApplicationState.CLOSE) {
         app = new cmd([]);
     }
+}
+export async function importClass(moduleName) {
+    let module = await import("./" + moduleName + ".js");
+    return module[moduleName];
 }
 //Prints out every line of log.
 export function drawLog() {

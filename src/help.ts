@@ -1,13 +1,7 @@
-import {Application, ApplicationState, spaces, wrapCharsWithPastelAndRainbow} from "./helpers.js";
-import {clearLog, LogNode, printLine} from "./bash.js";
+import {Application, ApplicationState, spaces} from "./helpers.js";
+import {importClass, LogNode, printLine} from "./bash.js";
 import {AppOption} from "./util/AppOption.js";
 import {cmd} from "./cmd.js";
-import {UserOptions} from "./util/UserOptions.js";
-import {gurgle} from "./gurgle.js";
-import {mm} from "./mm.js";
-import {suso} from "./suso.js";
-import {clock} from "./clock.js";
-import {hoge} from "./hoge.js";
 
 /*
 When displaying help <applicationName>, it should be formatted as below (note indentation).
@@ -40,51 +34,11 @@ export class help extends Application {
 		if (this.userParams.length > 0) {
 			let appToFetch = this.userParams[0];
 			if (cmd.directory.has(appToFetch)) {
-				//app:optionsString
-				//shortHelp
-				//	-- line break --
-				//longHelp
-				//	-- line break --
-				//Options:
-				//optionsArray = AppOptions.listOptions(app)
-				//	-- line break --
-				//Arguments:
-				//argumentsArray = AppOptions.listArguments(app)
-				let optionsString = [`${appToFetch}:${help.appendAppToOptionsString(appToFetch)}`];
-				let shortHelp = [spaces(2) + eval(appToFetch + ".shortHelp")];
-				let longHelp: string[] = eval(appToFetch + ".longHelp");
-				//Can't indent longHelp directly - have to make a copy.
-				let longHelpCopy: string[] = [];
-				for (let i = 0; i < longHelp.length; i++) {
-					longHelpCopy.push(spaces(2) + longHelp[i]);
+				try {
+					this.fetchAppInfo(appToFetch).then(_ => {});
 				}
-
-				//Options section
-				let optionsArrayOrUndefined = AppOption.listOptions(
-					eval(appToFetch + ".prototype.getAppOptions()"));
-				let optionsArray: string[] = [];
-				if (optionsArrayOrUndefined !== undefined) {
-					optionsArray.push("");
-					optionsArray.push(spaces(2) + "Options:");
-					help.indentArray(optionsArrayOrUndefined, 4);
-					optionsArray = optionsArray.concat(optionsArrayOrUndefined);
-				}
-
-				//Arguments section
-				let argArrayOrUndefined = AppOption.listArguments(
-					eval(appToFetch + ".prototype.getAppOptions()"));
-				let argArray: string[] = [];
-				if (argArrayOrUndefined !== undefined) {
-					argArray.push("");
-					argArray.push(spaces(2) + "Arguments:");
-					help.indentArray(argArrayOrUndefined, 4);
-					argArray = argArray.concat(argArrayOrUndefined);
-				}
-
-				//Putting it together
-				let helpTextArr = optionsString.concat(shortHelp, [""], longHelpCopy, optionsArray, argArray);
-				for (let i = 0; i < helpTextArr.length; i++) {
-					printLine(helpTextArr[i]);
+				catch (e) {
+					alert("Error fetching application " + appToFetch + e);
 				}
 			}
 			else {
@@ -92,7 +46,7 @@ export class help extends Application {
 			}
 		}
 		else {
-			help.printAboutBash();
+			help.printAboutBash().then(_ => {});
 		}
 		this.state = ApplicationState.CLOSE;
 	}
@@ -125,21 +79,71 @@ export class help extends Application {
 		return output;
 	}
 
-	static printAboutBash() {
+	static async printAboutBash() {
 		printLine("<span style='text-decoration-line: underline;'>Fake JS bash</span>");
 		printLine(`Type \`${cmd.HELP}\` to see this list.`);
+		printLine(`Type \`${cmd.HELP} PARAM\` for info about PARAM.`);
 		printLine(`Available commands in cmd: \`${cmd.RAINBOW}\` and \`${cmd.CLEAR}\`.`)
 		printLine(`Available commands in every application: \`${Application.EXIT}\` and \`${Application.QUIT}\`.`);
 		printLine("Executable scripts (may not be implemented):");
 		printLine("");
 		let keys = cmd.directory.keys();
 		for (const key of keys) {
-			printLine(help.appendAppToOptionsString(key));
+			printLine(await help.appendAppToOptionsString(key));
 		}
 	}
 
-	private static appendAppToOptionsString(app: string): string {
-		let s = AppOption.getOptionsString(eval(app + ".prototype.getAppOptions()"));
+	private async fetchAppInfo(appToFetch: string) {
+		let cls = await importClass(appToFetch);
+		//app:optionsString
+		//shortHelp
+		//	-- line break --
+		//longHelp
+		//	-- line break --
+		//Options:
+		//optionsArray = AppOptions.listOptions(app)
+		//	-- line break --
+		//Arguments:
+		//argumentsArray = AppOptions.listArguments(app)
+		let optionsString = [`${appToFetch}:${await help.appendAppToOptionsString(appToFetch)}`];
+		let shortHelp = [spaces(2) + cls.shortHelp];
+		let longHelp: string[] = cls.longHelp;
+		//Can't indent longHelp directly - have to make a copy.
+		let longHelpCopy: string[] = [];
+		for (let i = 0; i < longHelp.length; i++) {
+			longHelpCopy.push(spaces(2) + longHelp[i]);
+		}
+
+		//Options section
+		let optionsArrayOrUndefined = AppOption.listOptions(cls.prototype.getAppOptions());
+		let optionsArray: string[] = [];
+		if (optionsArrayOrUndefined !== undefined) {
+			optionsArray.push("");
+			optionsArray.push(spaces(2) + "Options:");
+			help.indentArray(optionsArrayOrUndefined, 4);
+			optionsArray = optionsArray.concat(optionsArrayOrUndefined);
+		}
+
+		//Arguments section
+		let argArrayOrUndefined = AppOption.listArguments(cls.prototype.getAppOptions());
+		let argArray: string[] = [];
+		if (argArrayOrUndefined !== undefined) {
+			argArray.push("");
+			argArray.push(spaces(2) + "Arguments:");
+			help.indentArray(argArrayOrUndefined, 4);
+			argArray = argArray.concat(argArrayOrUndefined);
+		}
+
+		//Putting it together
+		let helpTextArr = optionsString.concat(shortHelp, [""], longHelpCopy, optionsArray, argArray);
+		for (let i = 0; i < helpTextArr.length; i++) {
+			printLine(helpTextArr[i]);
+		}
+	}
+
+	private static async appendAppToOptionsString(app: string): Promise<string> {
+		let cls = await importClass(app);
+		let s = AppOption.getOptionsString(cls.prototype.getAppOptions());
 		if (s === undefined) {
 			s = app;
 		}
