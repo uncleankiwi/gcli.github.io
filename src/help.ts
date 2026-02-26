@@ -1,4 +1,4 @@
-import {Application, ApplicationState, wrapCharsWithPastelAndRainbow} from "./helpers.js";
+import {Application, ApplicationState, spaces, wrapCharsWithPastelAndRainbow} from "./helpers.js";
 import {clearLog, LogNode, printLine} from "./bash.js";
 import {AppOption} from "./util/AppOption.js";
 import {cmd} from "./cmd.js";
@@ -51,8 +51,9 @@ export class help extends Application {
 				//Arguments:
 				//argumentsArray = AppOptions.listArguments(app)
 				let optionsString = [`${appToFetch}:${help.appendAppToOptionsString(appToFetch)}`];
-				let shortHelp = [eval(appToFetch + ".shortHelp")];
+				let shortHelp = [spaces(2) + eval(appToFetch + ".shortHelp")];
 				let longHelp: string[] = eval(appToFetch + ".longHelp");
+				help.indentArray(longHelp, 2);
 
 				//Options section
 				let optionsArrayOrUndefined = AppOption.listOptions(
@@ -60,7 +61,8 @@ export class help extends Application {
 				let optionsArray: string[] = [];
 				if (optionsArrayOrUndefined !== undefined) {
 					optionsArray.push("");
-					optionsArray.push("Options:");
+					optionsArray.push(spaces(2) + "Options:");
+					help.indentArray(optionsArrayOrUndefined, 4);
 					optionsArray = optionsArray.concat(optionsArrayOrUndefined);
 				}
 
@@ -70,7 +72,8 @@ export class help extends Application {
 				let argArray: string[] = [];
 				if (argArrayOrUndefined !== undefined) {
 					argArray.push("");
-					argArray.push("Arguments:");
+					argArray.push(spaces(2) + "Arguments:");
+					help.indentArray(argArrayOrUndefined, 4);
 					argArray = argArray.concat(argArrayOrUndefined);
 				}
 
@@ -140,5 +143,11 @@ export class help extends Application {
 			s = app + " " + s;
 		}
 		return s;
+	}
+
+	private static indentArray(arr: string[], width: number) {
+		for (let i = 0; i < arr.length; i++) {
+			arr[i] = spaces(width) + arr[i];
+		}
 	}
 }
