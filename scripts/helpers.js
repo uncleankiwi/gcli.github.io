@@ -86,6 +86,10 @@ export function wrapCharsWithPastelAndRainbow(str) {
     }
     return new LogNode(output);
 }
+//Fetch a numerical option from userOptions. If there's no such setting, return defValue.
+export function parseNumberFromUserOptions(uo, option, defValue) {
+    return Number.parseInt(uo.getParam(option) ?? `${defValue}`);
+}
 export class Application {
     constructor(args) {
         this.applicationName = this.constructor.name;

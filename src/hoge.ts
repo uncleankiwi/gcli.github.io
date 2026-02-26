@@ -1,6 +1,7 @@
 import {Application} from "./helpers.js";
 import {printLine} from "./bash.js";
 import { KeyState } from "./util/KeyState.js";
+import {AppOption} from "./util/AppOption.js";
 
 const A = "A";
 const B = "B";
@@ -17,6 +18,16 @@ export class hoge extends Application {
 	b = "";
 	c = "";
 	threeArr: { [x: string]: any; }[] | { A: string; B: string; C: string; D: string; }[] | undefined;
+
+	getAppOptions() {
+		return [
+			new AppOption(undefined, "Some parameter.", "PARAM"),
+			new AppOption("c", "Test option 1."),
+			new AppOption("d", "Test option 2.", "File"),
+			new AppOption("e", "Test option 3."),
+			new AppOption(undefined, "Other param.", "BLOB")
+		];
+	}
 
 	evaluate(command: string) {
 		super.evaluate(command);

@@ -2,7 +2,7 @@ import {
 	Application,
 	ApplicationState,
 	wrapColour,
-	wrapCharsWithPastelAndRainbow
+	wrapCharsWithPastelAndRainbow, parseNumberFromUserOptions, rand
 } from "./helpers.js";
 import {clearLog, LogNode, printLine} from "./bash.js";
 import {AppOption} from "./util/AppOption.js";
@@ -16,15 +16,15 @@ enum MMState {
 	DONE
 }
 
-class GameData {
-	minColours = 1;
-	maxColours = 9;
+class MMGameData {
+	static minColours = 1;
+	static maxColours = 9;
 	colours = 4;
-	minChances = 1;
-	maxChances = 20;
+	static minChances = 1;
+	static maxChances = 20;
 	chances = 6;
-	minPlaces = 1;
-	maxPlaces = 9;
+	static minPlaces = 1;
+	static maxPlaces = 9;
 	places = 4;
 	won = false;
 	lost = false;
@@ -42,7 +42,7 @@ class GameData {
 
 	pickNumbers() {
 		for (let i = 0; i < this.places; i++) {
-			this.answer[i] = 1 + Math.floor(Math.random() * (this.colours));
+			this.answer[i] = rand(1, this.colours);
 		}
 	}
 
@@ -141,16 +141,20 @@ class GameData {
 
 export class mm extends Application {
 	gameState = MMState.TITLE;
-	gameData = new GameData();
+	gameData = new MMGameData();
+
+	colours = 6;
+	tries = 10;
+	tokens = 4;
+	randomColours = false;
+	alwaysPrompt = false;
+	static defaultColours: string[] = ["#555555",
+		"#aaaa55","#aa55aa","#55aaaa",
+		"#55aa55", "#aa5555","#5555aa",
+		"#ff00aa","#aaff00", "#00aaff"];
+	userColours: string[] = Array(mm.defaultColours.length);
 
 	titleString = "Press Enter to begin, or 'q' to quit."
-	setupStringPossibleColours = "Enter 'd' to start with default settings, " +
-		"or enter a number from 1-9 for the number of token types. " +
-		"(Default: 4)";
-	setupStringChances = "Enter a number from 1-20 for the number of tries. " +
-		"(Default: 6)";
-	setupStringPlaces = "Enter a number from 1-9 for the number of tokens. " +
-		"(Default: 4)";
 	inProgressString1 = "Enter ";	//+ this.gameData.places
 	inProgressString2 = " digits from 1 to " // + this.gameData.colours
 	inProgressString3 = " : ";
@@ -158,17 +162,68 @@ export class mm extends Application {
 	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 
+	get setupStringPossibleColours(): string {
+		return "Enter 'd' to start with default settings, " +
+			"or enter a number from 1-9 for the number of token types. " +
+			"(Default: " + this.colours + ")";
+	}
+	get setupStringPlaces(): string {
+		return "Enter a number from 1-9 for the number of tokens. " +
+			"(Default: " + this.tokens + ")";
+	}
+	get setupStringChances(): string {
+		return "Enter a number from 1-20 for the number of tries. " +
+			"(Default: " + this.tries + ")";
+	}
+
 	constructor(args: string[]) {
 		super(args);
+		this.initColours();
+
+		//Read options set by user
+		let parsedColour = parseNumberFromUserOptions(this.userArgs!, "c", 0);
+		if (parsedColour >= MMGameData.minColours && parsedColour <= MMGameData.maxColours) {
+			this.colours = parsedColour;
+		}
+		let parsedTries = parseNumberFromUserOptions(this.userArgs!, "t", 0);
+		if (parsedTries >= MMGameData.minChances && parsedTries <= MMGameData.maxChances) {
+			this.tries = parsedTries;
+		}
+		let parsedTokens = parseNumberFromUserOptions(this.userArgs!, "w", 0);
+		if (parsedTokens >= MMGameData.minPlaces && parsedTokens <= MMGameData.minPlaces) {
+			this.tokens = parsedTokens;
+		}
+		this.randomColours = this.userArgs!.get("r");
+		this.alwaysPrompt = this.userArgs!.get("p");
+
+		this.newGame(false, false);
+	}
+
+	initColours() {
+		let i = mm.defaultColours.length;
+		while (i--) {
+			this.userColours[i] = mm.defaultColours[i];
+		}
+	}
+
+	//Shuffles the colours between indices 1 and the end of the array.
+	//Index 0 isn't shuffled because that's the default grey.
+	shuffleColours() {
+		for (let i = 1; i < this.userColours.length; i++) {
+			let newIndex = rand(1, this.userColours.length - 1);
+			let temp = this.userColours[i];
+			this.userColours[i] = this.userColours[newIndex];
+			this.userColours[newIndex] = temp;
+		}
 	}
 
 	getAppOptions() {
 		return [
-			new AppOption(undefined, "Some parameter.", "PARAM"),
-			new AppOption("c", "Test option 1."),
-			new AppOption("d", "Test option 2.", "File"),
-			new AppOption("e", "Test option 3."),
-			new AppOption(undefined, "Other param.", "BLOB")
+			new AppOption("c", "Number of colours (1-9)", "CLRS"),
+			new AppOption("t", "Number of tries (1-20)", "TRIES"),
+			new AppOption("w", "Number of tokens (1-9)", "TOKENS"),
+			new AppOption("r", "Randomize token colours every game"),
+			new AppOption("p", "Show settings prompt every game")
 		];
 	}
 
@@ -187,7 +242,7 @@ export class mm extends Application {
 					return;
 				}
 				else {
-					this.gameData = new GameData();
+					this.gameData = new MMGameData();
 					this.gameState = MMState.CHOOSE_COLOURS;
 				}
 				break;
@@ -199,42 +254,33 @@ export class mm extends Application {
 					return;
 				}
 				let x = parseInt(command);
-				if (x >= this.gameData.minColours && x <= this.gameData.maxColours) {
-					this.gameData.colours = x;
+				if (x >= MMGameData.minColours && x <= MMGameData.maxColours) {
+					this.colours = x;
 				}
 				this.gameState = MMState.CHOOSE_CHANCES;
 				break;
 			case MMState.CHOOSE_CHANCES:
 				let y = parseInt(command);
-				if (y >= this.gameData.minChances && y <= this.gameData.maxChances) {
-					this.gameData.chances = y;
+				if (y >= MMGameData.minChances && y <= MMGameData.maxChances) {
+					this.tries = y;
 				}
-				this.gameData.attemptCount = 0;
 				this.gameState = MMState.CHOOSE_PLACES;
 				break;
 			case MMState.CHOOSE_PLACES:
 				let z = parseInt(command);
-				if (z >= this.gameData.minPlaces && z <= this.gameData.maxPlaces) {
-					this.gameData.places = z;
+				if (z >= MMGameData.minPlaces && z <= MMGameData.maxPlaces) {
+					this.tokens = z;
 				}
-				this.gameData.pickNumbers();
-				this.gameState = MMState.IN_PROGRESS;
+				this.newGame(false, true);
 				clearLog();
 				break;
 			case MMState.IN_PROGRESS:
-				// if (this.gameData.toClearLog) {
-				//
-				// 	this.gameData.toClearLog = false;
-				// }
 				this.gameData.attemptCount++;
 				this.gameData.parseDigits(command);
 				this.gameData.grade();
 				if (this.gameData.won || this.gameData.lost) {
 					this.gameState = MMState.DONE;
 				}
-				// printLine(this.gameData.attempts[this.gameData.attemptCount - 1] +
-				// 	" Grade: " + this.gameData.grades[this.gameData.attemptCount - 1] +
-				// 	" Chances left: " + this.gameData.chancesLeft());
 				clearLog();
 				this.printState();
 				break;
@@ -245,8 +291,7 @@ export class mm extends Application {
 					return;
 				}
 				else {
-					this.gameData = new GameData();
-					this.gameState = MMState.CHOOSE_COLOURS;
+					this.newGame(true, false);
 				}
 				break;
 			default:
@@ -280,6 +325,30 @@ export class mm extends Application {
 				return output;
 			default:
 				throw "Unknown game state at prompt(): " + this.gameState;
+		}
+	}
+
+	//Creates a new MMGameData object with default settings, sets state to IN_PROGRESS, shuffles colours.
+	newGame(createData: boolean, mustStartNow: boolean) {
+		if (createData) {
+			this.gameData = new MMGameData();
+		}
+
+		this.gameData.colours = this.colours;
+		this.gameData.chances = this.tries;
+		this.gameData.places = this.tokens;
+
+		if (this.randomColours) {
+			this.shuffleColours();
+		}
+
+		clearLog();
+		if (this.alwaysPrompt && !mustStartNow) {
+			this.gameState = MMState.CHOOSE_COLOURS;
+		}
+		else {
+			this.gameData.pickNumbers();
+			this.gameState = MMState.IN_PROGRESS;
 		}
 	}
 
@@ -318,27 +387,11 @@ export class mm extends Application {
 	}
 
 	colourFromNumber(k: number | string) {
-		switch (k) {
-			case 1:
-				return "#aaaa55";
-			case 2:
-				return "#aa55aa";
-			case 3:
-				return "#55aaaa";
-			case 4:
-				return "#55aa55";
-			case 5:
-				return "#aa5555";
-			case 6:
-				return "#5555aa";
-			case 7:
-				return "#ff00aa";
-			case 8:
-				return "#aaff00";
-			case 9:
-				return "#00aaff";
-			default:
-				return "#555555";
+		if (typeof(k) === "number" && k <= MMGameData.maxColours && k >= MMGameData.minColours) {
+			return this.userColours[k];
+		}
+		else {
+			return this.userColours[0];
 		}
 	}
 
