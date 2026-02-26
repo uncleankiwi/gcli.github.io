@@ -74,7 +74,7 @@ export class help extends Application {
 	static getLongHelp() {
 		let output: string[] = [];
 		output[0] = "Displays info about bash commands and applications.";
-		output[1] = `${cmd.HELP} without parameters gives info about bash.`;
+		output[1] = `\`${cmd.HELP}\` without parameters gives info about bash.`;
 		output[2] = `\`${cmd.HELP} PARAM\` gives info about the application PARAM.`;
 		return output;
 	}

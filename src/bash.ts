@@ -217,7 +217,7 @@ function onKeyUp(e: KeyboardEvent) {
 		if (app.state === ApplicationState.CLOSE) {
 			if (app.constructor.name === cmd.applicationName) {
 				clearLog();
-				printLine("Cmd restarted.");
+				printLine("cmd restarted");
 			}
 			app = new cmd([]);
 		}
