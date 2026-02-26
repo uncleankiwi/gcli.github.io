@@ -33,7 +33,37 @@ export class help extends Application {
         if (this.userParams.length > 0) {
             let appToFetch = this.userParams[0];
             if (cmd.directory.has(appToFetch)) {
-                let helpTextArr = eval(appToFetch + ".longHelp");
+                //app:optionsString
+                //shortHelp
+                //	-- line break --
+                //longHelp
+                //	-- line break --
+                //Options:
+                //optionsArray = AppOptions.listOptions(app)
+                //	-- line break --
+                //Arguments:
+                //argumentsArray = AppOptions.listArguments(app)
+                let optionsString = [`${appToFetch}:${help.appendAppToOptionsString(appToFetch)}`];
+                let shortHelp = [eval(appToFetch + ".shortHelp")];
+                let longHelp = eval(appToFetch + ".longHelp");
+                //Options section
+                let optionsArrayOrUndefined = AppOption.listOptions(eval(appToFetch + ".prototype.getAppOptions()"));
+                let optionsArray = [];
+                if (optionsArrayOrUndefined !== undefined) {
+                    optionsArray.push("");
+                    optionsArray.push("Options:");
+                    optionsArray = optionsArray.concat(optionsArrayOrUndefined);
+                }
+                //Arguments section
+                let argArrayOrUndefined = AppOption.listArguments(eval(appToFetch + ".prototype.getAppOptions()"));
+                let argArray = [];
+                if (argArrayOrUndefined !== undefined) {
+                    argArray.push("");
+                    argArray.push("Arguments:");
+                    argArray = argArray.concat(argArrayOrUndefined);
+                }
+                //Putting it together
+                let helpTextArr = optionsString.concat(shortHelp, [""], longHelp, optionsArray, argArray);
                 for (let i = 0; i < helpTextArr.length; i++) {
                     printLine(helpTextArr[i]);
                 }
@@ -70,7 +100,6 @@ export class help extends Application {
         return output;
     }
     static printAboutBash() {
-        console.log(gurgle.prototype.getAppOptions());
         printLine("<span style='text-decoration-line: underline;'>Fake JS bash</span>");
         printLine(`Type \`${cmd.HELP}\` to see this list.`);
         printLine(`Available commands in cmd: \`${cmd.RAINBOW}\` and \`${cmd.CLEAR}\`.`);
@@ -79,15 +108,18 @@ export class help extends Application {
         printLine("");
         let keys = cmd.directory.keys();
         for (const key of keys) {
-            let s = AppOption.getOptionsString(eval(key + ".prototype.getAppOptions()"));
-            if (s === undefined) {
-                s = key;
-            }
-            else {
-                s = key + " " + s;
-            }
-            printLine(s);
+            printLine(help.appendAppToOptionsString(key));
         }
+    }
+    static appendAppToOptionsString(app) {
+        let s = AppOption.getOptionsString(eval(app + ".prototype.getAppOptions()"));
+        if (s === undefined) {
+            s = app;
+        }
+        else {
+            s = app + " " + s;
+        }
+        return s;
     }
 }
 // static applicationName = "help";

@@ -1,11 +1,11 @@
 import {
 	Application,
 	ApplicationState,
-	makeRainbow,
 	wrapColour,
 	wrapCharsWithPastelAndRainbow
 } from "./helpers.js";
 import {clearLog, LogNode, printLine} from "./bash.js";
+import {AppOption} from "./util/AppOption.js";
 
 enum MMState {
 	TITLE,
@@ -160,6 +160,16 @@ export class mm extends Application {
 
 	constructor(args: string[]) {
 		super(args);
+	}
+
+	getAppOptions() {
+		return [
+			new AppOption(undefined, "Some parameter.", "PARAM"),
+			new AppOption("c", "Test option 1."),
+			new AppOption("d", "Test option 2.", "File"),
+			new AppOption("e", "Test option 3."),
+			new AppOption(undefined, "Other param.", "BLOB")
+		];
 	}
 
 	evaluate(command: string) {

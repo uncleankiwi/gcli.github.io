@@ -1,5 +1,6 @@
-import { Application, ApplicationState, makeRainbow, wrapColour, wrapCharsWithPastelAndRainbow } from "./helpers.js";
+import { Application, ApplicationState, wrapColour, wrapCharsWithPastelAndRainbow } from "./helpers.js";
 import { clearLog, LogNode, printLine } from "./bash.js";
+import { AppOption } from "./util/AppOption.js";
 var MMState;
 (function (MMState) {
     MMState[MMState["TITLE"] = 0] = "TITLE";
@@ -141,6 +142,15 @@ export class mm extends Application {
         this.winString = wrapCharsWithPastelAndRainbow("You win!");
         this.loseString = wrapColour("You lose...", "#555555");
         this.nextGameString = "Press Enter to begin another game, or 'q' to quit.";
+    }
+    getAppOptions() {
+        return [
+            new AppOption(undefined, "Some parameter.", "PARAM"),
+            new AppOption("c", "Test option 1."),
+            new AppOption("d", "Test option 2.", "File"),
+            new AppOption("e", "Test option 3."),
+            new AppOption(undefined, "Other param.", "BLOB")
+        ];
     }
     evaluate(command) {
         super.evaluate(command);

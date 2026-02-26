@@ -23,7 +23,7 @@ export class AppOption {
                 paramOptions.push(x);
             }
             else if (x.option === undefined && x.param !== undefined) {
-                onlyParam.push(x.param);
+                onlyParam.push(`[${x.param}]`);
             }
         });
         let output = [];
@@ -33,11 +33,12 @@ export class AppOption {
         paramOptions.forEach(x => {
             output.push(`[-${x.option} ${x.param}]`);
         });
-        output.concat(onlyParam);
+        output = output.concat(onlyParam);
         return output.join(" ");
     }
     /*
     Lists them like this (starting indentation is handled by help application):
+    Note that params are omitted - those are handled by listArguments()
       -a param	some explanation.
       -b 		more text.
       -c		some more text.
@@ -48,18 +49,72 @@ export class AppOption {
             return undefined;
         }
         //Finding longest param to see how many spaces should be padded in between option and description.
+        //Also, find out how many non-argument options there are.
         let longestParam = 0;
+        let nonArgOptionCount = 0;
         options.forEach(x => {
+            if (x.option === undefined) {
+                return;
+            }
+            else {
+                nonArgOptionCount++;
+            }
             if (x.param !== undefined && x.param.length > longestParam) {
                 longestParam = x.param.length;
             }
         });
+        if (nonArgOptionCount === 0) {
+            return undefined;
+        }
         //Now actually building options list
         let output = [];
         options.forEach(x => {
+            if (x.option === undefined) {
+                return; //This is an argument.
+            }
             let paramString = x.param ?? "";
-            let paramSpaces = spaces(longestParam - paramString.length);
-            output.push(`-${x.option} ${paramString}${paramSpaces}\t${x.description}`);
+            let paramSpaces = spaces(longestParam - paramString.length + 2);
+            output.push(`-${x.option} ${paramString}${paramSpaces}${x.description}`);
+        });
+        return output;
+    }
+    /*
+    Lists them like this (starting indentation is handled by help application):
+    As before, note that options are omitted - those are handled by listOptions()
+      PARAM1	some explanation.
+      PARAM2	more text.
+    Between PARAM and description should be space + longestParam worth of spaces + tab
+     */
+    static listArguments(options) {
+        if (options === undefined || options.length === 0) {
+            return undefined;
+        }
+        //Finding longest param to see how many spaces should be padded in between option and description.
+        let longestParam = 0;
+        let argOptionCount = 0;
+        options.forEach(x => {
+            if (x.option !== undefined) {
+                return;
+            }
+            else {
+                argOptionCount++;
+            }
+            if (x.param !== undefined && x.param.length > longestParam) {
+                longestParam = x.param.length;
+            }
+        });
+        if (argOptionCount === 0) {
+            return undefined;
+        }
+        //Now actually building options list
+        let output = [];
+        options.forEach(x => {
+            if (x.option !== undefined) {
+                return;
+            }
+            let paramString = x.param ?? "";
+            let paramSpaces = spaces(longestParam - paramString.length + 2);
+            output.push(`${paramString}${paramSpaces}${x.description}`);
         });
         return output;
     }
