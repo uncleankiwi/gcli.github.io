@@ -21,7 +21,7 @@ class MMGameData {
 	static maxColours = 9;
 	colours = 4;
 	static minChances = 1;
-	static maxChances = 20;
+	static maxChances = 18;	//Display height 20 - statusRow - prompt
 	chances = 6;
 	static minPlaces = 1;
 	static maxPlaces = 9;
@@ -140,6 +140,10 @@ class MMGameData {
 
 
 export class mm extends Application {
+	static shortHelp: string = "That colour-guessing game.";
+	static longHelp = ["Guess a combination of colours within a number",
+	"of tries."];
+
 	gameState = MMState.TITLE;
 	gameData = new MMGameData();
 
@@ -219,9 +223,9 @@ export class mm extends Application {
 
 	getAppOptions() {
 		return [
-			new AppOption("c", "Number of colours (1-9)", "CLRS"),
-			new AppOption("t", "Number of tries (1-20)", "TRIES"),
-			new AppOption("w", "Number of tokens (1-9)", "TOKENS"),
+			new AppOption("c", "Number of colours (1-" + MMGameData.maxColours + ")", "CLRS"),
+			new AppOption("t", "Number of tries (1-" + MMGameData.maxChances + ")", "TRIES"),
+			new AppOption("w", "Number of tokens (1-" + MMGameData.maxPlaces + ")", "TOKENS"),
 			new AppOption("r", "Randomize token colours every game"),
 			new AppOption("p", "Show settings prompt every game")
 		];
@@ -272,7 +276,6 @@ export class mm extends Application {
 					this.tokens = z;
 				}
 				this.newGame(false, true);
-				clearLog();
 				break;
 			case MMState.IN_PROGRESS:
 				this.gameData.attemptCount++;
@@ -348,6 +351,7 @@ export class mm extends Application {
 		}
 		else {
 			this.gameData.pickNumbers();
+			this.printState();
 			this.gameState = MMState.IN_PROGRESS;
 		}
 	}
@@ -376,6 +380,13 @@ export class mm extends Application {
 			printLine(row);
 		}
 		let strStats = this.gameData.chancesLeft() + " chances left.";
+
+		//Print out the rest of the blank rows
+		let blankRow = Array(this.gameData.places).fill("-").join(" ");
+		for (let i = 0; i < this.gameData.chancesLeft(); i++) {
+			printLine(blankRow);
+		}
+
 		if (this.gameData.lost) {
 			strStats +=	" Answer: " + this.gameData.answer;
 		}
