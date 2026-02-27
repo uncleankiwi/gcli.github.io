@@ -165,7 +165,7 @@ export class mm extends Application {
             this.tries = parsedTries;
         }
         let parsedTokens = parseNumberFromUserOptions(this.userArgs, "w", 0);
-        if (parsedTokens >= MMGameData.minPlaces && parsedTokens <= MMGameData.minPlaces) {
+        if (parsedTokens >= MMGameData.minPlaces && parsedTokens <= MMGameData.maxPlaces) {
             this.tokens = parsedTokens;
         }
         this.randomColours = this.userArgs.get("r");
