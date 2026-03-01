@@ -1,16 +1,19 @@
-import { Application, ApplicationState } from "./helpers.js";
+import { Application, ApplicationState, parseNumberFromUserOptions } from "./helpers.js";
 import { AppOption } from "./util/AppOption.js";
-import { clearLog, app } from "./bash.js";
+import { clearLog, printLine } from "./bash.js";
 import { Dictionary } from "./util/Dictionary.js";
 import { GurgleGame } from "./util/GurgleGame.js";
 export class gurgle extends Application {
     constructor(args) {
         super(args);
         this.loading = true;
-        Dictionary.init().then(function () {
-            app.loading = false;
-        }, function (e) {
-            alert(e + " :failed to load dictionary for gurgle.");
+        this.wordLength = 5;
+        this.randomLength = false;
+        this.answerRarity = 3;
+        this.guessRarity = 5;
+        this.init().catch((e) => {
+            this.state = ApplicationState.CLOSE;
+            printLine(e.message);
         });
     }
     getAppOptions() {
@@ -34,7 +37,7 @@ export class gurgle extends Application {
             return;
         }
         if (this.game === undefined || this.game.won || this.game.lost) {
-            this.game = new GurgleGame(5, 0, 3, 5);
+            this.game = new GurgleGame(this.wordLength, Dictionary.LOWEST_RARITY, this.answerRarity, this.guessRarity);
             clearLog();
             this.game.draw();
         }
@@ -56,6 +59,60 @@ export class gurgle extends Application {
             s = "Guess? ('q' to quit) ";
         }
         return [s];
+    }
+    async init() {
+        try {
+            await Dictionary.init();
+            //Read options set by user
+            if (this.userArgs.get("l")) {
+                let l = this.userArgs.getParam("l");
+                if (this.userArgs.getParam("l") === undefined) {
+                    this.randomLength = true;
+                    this.wordLength = undefined;
+                }
+                else {
+                    this.wordLength = Number.parseInt(l);
+                }
+            }
+            if (this.userArgs.get("a")) {
+                let parsedAnswerRarity = parseNumberFromUserOptions(this.userArgs, "a", -1);
+                if (parsedAnswerRarity < Dictionary.LOWEST_RARITY || parsedAnswerRarity > Dictionary.HIGHEST_RARITY) {
+                    throw new Error("Answer rarity needs to be in the range " + Dictionary.LOWEST_RARITY + "-" +
+                        Dictionary.HIGHEST_RARITY);
+                }
+                else {
+                    this.answerRarity = parsedAnswerRarity;
+                }
+            }
+            if (this.userArgs.get("g")) {
+                let parsedGuessRarity = parseNumberFromUserOptions(this.userArgs, "g", -1);
+                if (parsedGuessRarity < Dictionary.LOWEST_RARITY || parsedGuessRarity > Dictionary.HIGHEST_RARITY) {
+                    throw new Error("Guess rarity needs to be in the range " + Dictionary.LOWEST_RARITY + "-" +
+                        Dictionary.HIGHEST_RARITY);
+                }
+                else if (parsedGuessRarity < this.answerRarity) {
+                    throw new Error(`Guess rarity (${parsedGuessRarity}) cannot be lower` +
+                        ` than answer's (${this.answerRarity})`);
+                }
+                else {
+                    this.guessRarity = parsedGuessRarity;
+                }
+            }
+            //Perform length check if not using random word length
+            if (this.wordLength !== undefined) {
+                let longestLength = Dictionary.longestLength(Dictionary.LOWEST_RARITY, this.answerRarity);
+                if (longestLength === undefined) {
+                    throw new Error(`There are no words between rarity ${Dictionary.LOWEST_RARITY} and ${this.answerRarity}`);
+                }
+                if (longestLength < this.wordLength) {
+                    throw new Error(`Longest word length between rarity ${Dictionary.LOWEST_RARITY}-${this.answerRarity}: ${longestLength}`);
+                }
+            }
+            this.loading = false;
+        }
+        catch (e) {
+            throw await e;
+        }
     }
 }
 // static applicationName = "gurgle";

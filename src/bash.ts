@@ -190,6 +190,7 @@ function refreshScreen() {
 	log.step();
 	drawLog();
 	app.redraw();	//Refreshes the log
+	checkAndCloseApplication();
 }
 
 function onKeyDown(e: KeyboardEvent) {
@@ -214,12 +215,8 @@ function onKeyUp(e: KeyboardEvent) {
 	else if (e.key === 'Enter') {
 		log.enter();	//Push app.prompt() and currentInput to the log.
 		app.evaluate(log.currentInput);
-		if (app.state === ApplicationState.CLOSE) {
-			if (app.constructor.name === cmd.applicationName) {
-				clearLog();
-				printLine("cmd restarted");
-			}
-			app = new cmd([]);
+		if (checkAndCloseApplication()) {
+			//app.state === ApplicationState.CLOSE is true here
 		}
 		else if (app.state === ApplicationState.OPEN_APPLICATION) {
 			//Only allow cmd to swap applications.
@@ -228,6 +225,20 @@ function onKeyUp(e: KeyboardEvent) {
 			}
 		}
 		log.currentInput = "";
+	}
+}
+
+function checkAndCloseApplication() {
+	if (app.state === ApplicationState.CLOSE) {
+		if (app.constructor.name === cmd.applicationName) {
+			clearLog();
+			printLine("cmd restarted");
+		}
+		app = new cmd([]);
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 

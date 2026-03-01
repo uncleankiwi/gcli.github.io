@@ -20,7 +20,12 @@ export class GurgleGame {
         this.c3 = c3;
         this.won = false;
         this.lost = false;
-        this.answer = Dictionary.getRandomWord(l, c1, c2);
+        if (l === undefined) {
+            this.answer = Dictionary.getRandomLengthWord(c1, c2);
+        }
+        else {
+            this.answer = Dictionary.getRandomWord(l, c1, c2);
+        }
         this.answerArr = [...this.answer];
         this.keyStatus = new Map();
         this.statusDisplay = [];

@@ -31,13 +31,18 @@ export class GurgleGame {
 
 	//Start a new game with word length l, and commonality ranging between c1 and c2 inclusive.
 	//Attempts made will be checked against commonality range c1 to c3.
-	constructor(l: number, c1: number, c2: number, c3: number) {
+	constructor(l: number | undefined, c1: number, c2: number, c3: number) {
 		this.c1 = c1;
 		this.c2 = c2;
 		this.c3 = c3;
 		this.won = false;
 		this.lost = false;
-		this.answer = Dictionary.getRandomWord(l, c1, c2);
+		if (l === undefined) {
+			this.answer = Dictionary.getRandomLengthWord(c1, c2);
+		}
+		else {
+			this.answer = Dictionary.getRandomWord(l, c1, c2);
+		}
 		this.answerArr = [...this.answer];
 		this.keyStatus = new Map<string, LETTER_GRADE>();
 		this.statusDisplay = [];

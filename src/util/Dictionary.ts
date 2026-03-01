@@ -1,10 +1,10 @@
 
 /*
 Requirements:
-	- Get random word of length d, of commonality c1~c2 with getRandomWord(int d, int c1, int c2)
-	- Get random word of random length, of commonality c1~c2 with getRandomLengthWord(int c1, int c2)
-		Every word in the range c1~c2 should have an equal chance of getting chosen, independent of word length.
-	- Check if word w is present within commonality c1~c3 with isWord(String w, int c1, int c3)
+	- Get random word of length d, of rarity r1~r2 with getRandomWord(int d, int r1, int r2)
+	- Get random word of random length, of rarity r1~r2 with getRandomLengthWord(int r1, int r2)
+		Every word in the range r1~r2 should have an equal chance of getting chosen, independent of word length.
+	- Check if word w is present within rarity r1~r2 with isWord(String w, int r1, int r2)
  */
 import {WordGroup} from "./WordGroup.js";
 import {rand} from "../helpers.js";
@@ -13,6 +13,8 @@ export class Dictionary {
 	static initialized = false;
 	static rawDictionary: Map<string, Set<string>>;
 	static wordGroups: WordGroup[][];
+	static LOWEST_RARITY = 0;
+	static HIGHEST_RARITY = 8;
 
 	static async init() {
 		if (Dictionary.initialized) {
@@ -24,15 +26,15 @@ export class Dictionary {
 
 		Dictionary.rawDictionary.forEach(function(value, key) {
 			let set = new Set(value);
-			let commonality = parseInt(key);
-			if (Dictionary.wordGroups[commonality] === undefined) {
-				Dictionary.wordGroups[commonality] = [];
+			let rarity = parseInt(key);
+			if (Dictionary.wordGroups[rarity] === undefined) {
+				Dictionary.wordGroups[rarity] = [];
 			}
 			set.forEach(w => {
-				if (Dictionary.wordGroups[commonality][w.length] === undefined) {
-					Dictionary.wordGroups[commonality][w.length] = new WordGroup();
+				if (Dictionary.wordGroups[rarity][w.length] === undefined) {
+					Dictionary.wordGroups[rarity][w.length] = new WordGroup();
 				}
-				Dictionary.wordGroups[commonality][w.length].add(w);
+				Dictionary.wordGroups[rarity][w.length].add(w);
 			});
 		});
 
@@ -43,20 +45,20 @@ export class Dictionary {
 		return fetch("./resources/dictionary.json")
 			.then(response => {
 				if (!response.ok) {
-					alert(`${response.status}: failed to load dictionary.json`);
+					throw new Error(`${response.status}: failed to load dictionary.json`);
 				}
 				return response.json();
 			});
 	}
 
 
-// - Get random word of length d, of commonality c1~c2 with getRandomWord(int d, int c1, int c2)
-	static getRandomWord(d: number, c1: number, c2: number) {
+	//Get random word of length l, of rarity c1~c2 with getRandomWord(int d, int c1, int c2)
+	static getRandomWord(l: number, r1: number, r2: number) {
 		let arrGroups = [];
 		let arrCumulative = [];
 		let cumulative = 0;
-		for (let i = c1; i <= c2; i++) {
-			let group = Dictionary.wordGroups[i][d];
+		for (let i = r1; i <= r2; i++) {
+			let group = Dictionary.wordGroups[i][l];
 			arrGroups.push(group);
 			cumulative += group.size();
 			arrCumulative.push(cumulative);
@@ -65,13 +67,13 @@ export class Dictionary {
 		return Dictionary.findRandomWordInArrays(arrGroups, arrCumulative, cumulative);
 	}
 
-// - Get random word of random length, of commonality c1~c2 with getRandomLengthWord(int c1, int c2)
-// 		Every word in the range c1~c2 should have an equal chance of getting chosen, independent of word length.
-	static getRandomLengthWord(c1: number, c2: number) {
+// - Get random word of random length, of rarity c1~c2 with getRandomLengthWord(int c1, int c2)
+// 		Every word in the range r1~r2 should have an equal chance of getting chosen, independent of word length.
+	static getRandomLengthWord(r1: number, r2: number) {
 		let arrGroups: WordGroup[] = [];
 		let arrCumulative: number[] = [];
 		let cumulative = 0;
-		for (let i = c1; i <= c2; i++) {
+		for (let i = r1; i <= r2; i++) {
 			for (let j = 0; j < Dictionary.wordGroups[i].length; j++) {
 				let group = Dictionary.wordGroups[i][j];
 				if (group !== undefined) {
@@ -97,15 +99,33 @@ export class Dictionary {
 		throw Error("Error finding a random word using findRandomWordInArrays()");
 	}
 
-// - Check if word w is present within commonality c1~c3 with isWord(String w, int c1, int c3)
-	static isWord(w: string, c1: any, c2: number) {
+	//Check if word w is present within rarity r1~r2 with isWord(String w, int r1, int r2)
+	static isWord(w: string, r1: number, r2: number) {
 		let isWord = false;
-		for (let i = c1; i <= c2; i++) {
+		for (let i = r1; i <= r2; i++) {
 			isWord = Dictionary.wordGroups[i][w.length].isWord(w);
 			if (isWord) {
 				break;
 			}
 		}
 		return isWord;
+	}
+
+	//Return the length of the longest word(s) present within range r1~r2. If no words, return undefined.
+	static longestLength(r1: number, r2: number) {
+		let longest = 0;
+		for (let rarity = r1; rarity <= r2; rarity++) {
+			//NB: subtract 1 because length 1 words go in [1].
+			let longestLengthInRarity = Dictionary.wordGroups[rarity].length - 1;
+			if (longestLengthInRarity > longest) {
+				longest = longestLengthInRarity
+			}
+		}
+		if (longest === 0) {
+			return undefined;
+		}
+		else {
+			return longest;
+		}
 	}
 }
