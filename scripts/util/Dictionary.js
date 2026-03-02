@@ -46,9 +46,11 @@ export class Dictionary {
         let cumulative = 0;
         for (let i = r1; i <= r2; i++) {
             let group = Dictionary.wordGroups[i][l];
-            arrGroups.push(group);
-            cumulative += group.size();
-            arrCumulative.push(cumulative);
+            if (group !== undefined) {
+                arrGroups.push(group);
+                cumulative += group.size();
+                arrCumulative.push(cumulative);
+            }
         }
         return Dictionary.findRandomWordInArrays(arrGroups, arrCumulative, cumulative);
     }
@@ -85,7 +87,7 @@ export class Dictionary {
     static isWord(w, r1, r2) {
         let isWord = false;
         for (let i = r1; i <= r2; i++) {
-            isWord = Dictionary.wordGroups[i][w.length].isWord(w);
+            isWord = Dictionary.wordGroups[i][w.length]?.isWord(w) ?? false;
             if (isWord) {
                 break;
             }
@@ -112,4 +114,4 @@ export class Dictionary {
 }
 Dictionary.initialized = false;
 Dictionary.LOWEST_RARITY = 0;
-Dictionary.HIGHEST_RARITY = 8;
+Dictionary.HIGHEST_RARITY = 7;

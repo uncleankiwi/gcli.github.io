@@ -33,8 +33,12 @@ export class gurgle extends Application {
 	getAppOptions() {
 		return [
 			new AppOption("l", "length of word, random when param unspecified", "len"),
-			new AppOption("a", "rarity of word to use as answer (0-8)", "aLimit"),
-			new AppOption("g", "rarity of word usable as guess (0-8)", "gLimit")
+			new AppOption("a",
+				`rarity of word to use as answer (${Dictionary.LOWEST_RARITY}-${Dictionary.HIGHEST_RARITY})`,
+				"aLimit"),
+			new AppOption("g",
+				`rarity of word to use as guess (${Dictionary.LOWEST_RARITY}-${Dictionary.HIGHEST_RARITY})`,
+				"gLimit")
 		];
 	}
 
@@ -113,13 +117,14 @@ export class gurgle extends Application {
 					throw new Error("Guess rarity needs to be in the range " + Dictionary.LOWEST_RARITY + "-" +
 						Dictionary.HIGHEST_RARITY);
 				}
-				else if (parsedGuessRarity < this.answerRarity) {
-					throw new Error(`Guess rarity (${parsedGuessRarity}) cannot be lower` +
-						` than answer's (${this.answerRarity})`);
-				}
 				else {
 					this.guessRarity = parsedGuessRarity;
 				}
+			}
+
+			if (this.guessRarity < this.answerRarity) {
+				throw new Error(`Guess rarity (${this.guessRarity}) cannot be lower` +
+					` than answer's (${this.answerRarity})`);
 			}
 
 			//Perform length check if not using random word length

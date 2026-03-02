@@ -14,7 +14,7 @@ export class Dictionary {
 	static rawDictionary: Map<string, Set<string>>;
 	static wordGroups: WordGroup[][];
 	static LOWEST_RARITY = 0;
-	static HIGHEST_RARITY = 8;
+	static HIGHEST_RARITY = 7;
 
 	static async init() {
 		if (Dictionary.initialized) {
@@ -59,9 +59,11 @@ export class Dictionary {
 		let cumulative = 0;
 		for (let i = r1; i <= r2; i++) {
 			let group = Dictionary.wordGroups[i][l];
-			arrGroups.push(group);
-			cumulative += group.size();
-			arrCumulative.push(cumulative);
+			if (group !== undefined) {
+				arrGroups.push(group);
+				cumulative += group.size();
+				arrCumulative.push(cumulative);
+			}
 		}
 
 		return Dictionary.findRandomWordInArrays(arrGroups, arrCumulative, cumulative);
@@ -103,7 +105,7 @@ export class Dictionary {
 	static isWord(w: string, r1: number, r2: number) {
 		let isWord = false;
 		for (let i = r1; i <= r2; i++) {
-			isWord = Dictionary.wordGroups[i][w.length].isWord(w);
+			isWord = Dictionary.wordGroups[i][w.length]?.isWord(w) ?? false;
 			if (isWord) {
 				break;
 			}
